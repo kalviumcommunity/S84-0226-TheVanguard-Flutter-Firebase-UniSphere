@@ -25,3 +25,32 @@ This fragmented approach makes coordination inefficient, confusing, and frustrat
 
 ---
 
+## ✅ Solution  
+
+UniSphere provides a **single digital platform** where:
+
+- 📢 Clubs can post announcements  
+- 📝 Students can register for events  
+- 📊 Attendance can be tracked digitally  
+- 🔔 Real-time updates keep everyone informed  
+
+By combining cross-platform access with real-time backend services, UniSphere simplifies coordination and improves engagement.
+
+---
+
+## 🛠 Tech Stack  
+
+### 🎨 Frontend
+- Flutter  
+- Dart  
+
+### 🔥 Backend
+- Firebase Authentication  
+- Cloud Firestore  
+- Firebase Storage  
+- Cloud Functions  
+
+### ☁️ Infrastructure & DevOps
+- Google Cloud  
+- Firebase Hosting  
+- GitHub Actions (CI/CD)
