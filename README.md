@@ -54,3 +54,17 @@ By combining cross-platform access with real-time backend services, UniSphere si
 - Google Cloud  
 - Firebase Hosting  
 - GitHub Actions (CI/CD)
+
+---
+
+## 🌟 Key Highlights  
+
+- 📱 Cross-platform (Android, iOS, Web)  
+- ⚡ Real-time updates  
+- 🔐 Secure authentication  
+- ☁️ Cloud scalable architecture  
+- 🧩 Single unified system for campus coordination  
+
+---
+
+> One Platform. One Community. Seamless Coordination. 🚀
