@@ -1,0 +1,66 @@
+# Flutter & Dart Fundamentals – Counter Demo
+
+## Flutter Architecture
+
+Flutter consists of three layers:
+
+1. Framework Layer (Dart)
+   - Material & Cupertino widgets
+   - Rendering and animation libraries
+
+2. Engine Layer (C++)
+   - Uses Skia rendering engine
+   - Handles GPU acceleration and text layout
+
+3. Embedder Layer
+   - Connects Flutter to Android, iOS, Web, and Desktop
+
+Flutter renders its own UI instead of using native components, ensuring design consistency.
+
+---
+
+## StatelessWidget vs StatefulWidget
+
+### StatelessWidget
+- Immutable
+- No internal state
+- Used for static UI components
+
+### StatefulWidget
+- Maintains mutable state
+- UI updates dynamically using setState()
+
+---
+
+## Reactive UI in Flutter
+
+When setState() is called:
+- The widget is marked dirty
+- build() method runs again
+- Only affected widgets are rebuilt
+
+UI = f(state)
+
+---
+
+## Why Dart is Ideal for Flutter
+
+- AOT compilation → Native performance
+- JIT compilation → Hot Reload
+- Strong typing
+- Null Safety
+- Async/Await support
+- Fully object-oriented
+
+---
+
+## Demo Explanation
+
+This project demonstrates:
+- Stateless root widget (MyApp)
+- Stateful counter screen
+- Reactive UI updates using setState()
+
+
+
+![alt text](image.png)
