@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'screens/home_screen.dart';
-import 'screens/second_screen.dart';
+import 'screens/responsive_layout.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,13 +11,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const HomeScreen(),
-        '/second': (context) => const SecondScreen(),
-      },
+      home: ResponsiveLayout(),
     );
   }
 }
