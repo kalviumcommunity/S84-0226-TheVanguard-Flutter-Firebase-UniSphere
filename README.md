@@ -14,7 +14,8 @@ lib/
 ├── screens/
 │   ├── welcome_screen.dart          # Welcome screen (StatefulWidget)
 │   ├── responsive_home.dart         # Responsive home screen (StatefulWidget)
-│   └── widget_tree_demo.dart        # Widget Tree & Reactive UI demo (StatefulWidget)
+│   ├── widget_tree_demo.dart        # Widget Tree & Reactive UI demo (StatefulWidget)
+│   └── stateless_stateful_demo.dart # Stateless vs Stateful widget demo
 └── widgets/                         # Reusable widgets (reserved for future sprints)
 ```
 
@@ -24,6 +25,7 @@ lib/
 | `lib/screens/welcome_screen.dart` | A `StatefulWidget` that toggles button text on press using `setState`. |
 | `lib/screens/responsive_home.dart` | Responsive layout — single-column on phones, two-column `GridView` on tablets. |
 | `lib/screens/widget_tree_demo.dart` | Demonstrates the Widget Tree hierarchy and Flutter's reactive UI model with a counter. |
+| `lib/screens/stateless_stateful_demo.dart` | Combines a `StatelessWidget` header and a `StatefulWidget` counter to contrast static and reactive UI. |
 | `lib/widgets/` | Empty directory scaffolded for custom reusable widgets in upcoming sprints. |
 
 ---
@@ -207,6 +209,107 @@ Flutter uses an **Element reconciliation** algorithm similar to React's virtual 
 - Only widgets with **new data** (e.g., the `Text` widget showing the counter value) are updated in the render tree.
 
 This selective rebuilding keeps frame times low and makes Flutter performant even with complex UIs.
+
+---
+
+## Stateless vs Stateful Widgets Demo
+
+The `StatelessStatefulDemo` screen (`lib/screens/stateless_stateful_demo.dart`) pairs a **StatelessWidget** and a **StatefulWidget** side-by-side to highlight their differences.
+
+### Screen Structure
+
+```
+Scaffold
+┣ AppBar (title: "Widget Types Demo")
+┗ Body
+  ┗ Column (centered)
+    ┣ DemoHeader          ← StatelessWidget
+    ┣ SizedBox (spacing)
+    ┗ InteractiveCounter   ← StatefulWidget
+```
+
+### What Is a StatelessWidget?
+
+A `StatelessWidget` describes part of the UI that depends **only** on its constructor arguments. Once built, its output never changes — it has no mutable fields and no `setState()`. Use it for labels, icons, static layouts, and any element whose appearance is fixed for its lifetime.
+
+```dart
+class DemoHeader extends StatelessWidget {
+  const DemoHeader({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Text(
+      'Stateless vs Stateful Demo',
+      textAlign: TextAlign.center,
+      style: TextStyle(
+        fontSize: 26,
+        fontWeight: FontWeight.bold,
+        color: Colors.deepPurple,
+      ),
+    );
+  }
+}
+```
+
+### What Is a StatefulWidget?
+
+A `StatefulWidget` owns a companion `State` object that can hold **mutable** data. When that data changes, calling `setState()` tells Flutter to re-run `build()`, updating only the affected part of the widget tree. Use it whenever the UI must react to user input, animations, or asynchronous events.
+
+```dart
+class InteractiveCounter extends StatefulWidget {
+  const InteractiveCounter({super.key});
+
+  @override
+  State<InteractiveCounter> createState() => _InteractiveCounterState();
+}
+
+class _InteractiveCounterState extends State<InteractiveCounter> {
+  int _counter = 0;
+
+  void _increase() {
+    setState(() {
+      _counter++;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text('Count: $_counter', style: const TextStyle(fontSize: 48)),
+        const SizedBox(height: 20),
+        ElevatedButton(
+          onPressed: _increase,
+          child: const Text('Increase'),
+        ),
+      ],
+    );
+  }
+}
+```
+
+### When to Use Each?
+
+| Criterion | StatelessWidget | StatefulWidget |
+|-----------|----------------|----------------|
+| Mutable data | None | Yes — stored in `State` |
+| Rebuilds on interaction | No | Yes — via `setState()` |
+| Typical use cases | Titles, icons, static cards | Forms, counters, toggles, animations |
+| Performance | Lightest — never rebuilds itself | Rebuilds only when `setState()` is called |
+
+### Demo Screenshots
+
+| State | Screenshot |
+|-------|------------|
+| Initial UI (count = 0) | ![Initial State](screenshots/stateless_stateful_initial.png) |
+| After button clicks (count incremented) | ![Updated State](screenshots/stateless_stateful_updated.png) |
+
+### Reflection
+
+**How Stateful widgets make apps dynamic** — Without mutable state, every screen would be a static poster. `StatefulWidget` lets the app remember user actions (taps, text input, scroll position) and respond instantly by re-rendering only the widgets whose data changed. This is the foundation of every interactive Flutter experience — from a simple counter to complex forms and real-time feeds.
+
+**Why separating static and reactive UI improves maintainability** — Marking a widget as `StatelessWidget` signals to both Flutter and future developers that it carries no side-effects and never triggers rebuilds on its own. This makes the codebase easier to reason about: `StatelessWidget`s can be safely reused, tested in isolation, and moved around without worrying about hidden state. Keeping state concentrated in clearly-identified `StatefulWidget`s reduces bugs and makes performance profiling straightforward — you know exactly which widgets can change and why.
 
 ---
 
