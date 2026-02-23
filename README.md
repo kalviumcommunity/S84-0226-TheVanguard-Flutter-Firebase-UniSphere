@@ -10,8 +10,10 @@ A production-quality Flutter application demonstrating responsive UI design and 
 
 ```
 lib/
-├── main.dart                        # App entry point (StatelessWidget)
+├── main.dart                        # App entry point — named-route configuration
 ├── screens/
+│   ├── home_screen.dart             # Home screen with navigation button (StatelessWidget)
+│   ├── second_screen.dart           # Second screen — receives arguments (StatelessWidget)
 │   ├── welcome_screen.dart          # Welcome screen (StatefulWidget)
 │   ├── responsive_home.dart         # Responsive home screen (StatefulWidget)
 │   ├── widget_tree_demo.dart        # Widget Tree & Reactive UI demo (StatefulWidget)
@@ -21,7 +23,9 @@ lib/
 
 | Path | Purpose |
 |------|---------||
-| `lib/main.dart` | Configures `MaterialApp`, disables the debug banner, and sets `ResponsiveHome` as the home route. |
+| `lib/main.dart` | Configures `MaterialApp` with `initialRoute` and a `routes` map for named navigation. |
+| `lib/screens/home_screen.dart` | Landing screen with a button that navigates to `SecondScreen` via `Navigator.pushNamed`. |
+| `lib/screens/second_screen.dart` | Destination screen that displays a passed argument and pops back via `Navigator.pop`. |
 | `lib/screens/welcome_screen.dart` | A `StatefulWidget` that toggles button text on press using `setState`. |
 | `lib/screens/responsive_home.dart` | Responsive layout — single-column on phones, two-column `GridView` on tablets. |
 | `lib/screens/widget_tree_demo.dart` | Demonstrates the Widget Tree hierarchy and Flutter's reactive UI model with a counter. |
@@ -414,6 +418,129 @@ The Performance tab surfaces frame-level timing so developers can spot jank (fra
 
 **How would these tools help in team development?**
 In a team setting, Hot Reload lets UI designers and developers iterate on screens together in real time. Standardising `debugPrint()` logging with clear prefixes makes shared debugging sessions more productive. DevTools performance baselines can be committed to CI pipelines, ensuring that no pull request introduces regressions above an agreed frame-budget threshold.
+
+---
+
+## Multi-Screen Navigation Using Navigator and Routes
+
+The `HomeScreen` and `SecondScreen` files demonstrate Flutter's built-in navigation system using the **Navigator** widget and **named routes**.
+
+### What Is Navigator?
+
+`Navigator` is a widget that manages a stack of `Route` objects. Pushing a route adds a new screen on top of the stack; popping removes the top screen and reveals the one beneath it. This stack-based model mirrors how users expect "forward" and "back" to work.
+
+### What Is the Navigation Stack?
+
+The navigation stack is a last-in-first-out (LIFO) collection of routes:
+
+```
+┌──────────────────┐
+│  SecondScreen     │  ← top (visible)
+├──────────────────┤
+│  HomeScreen       │  ← hidden underneath
+└──────────────────┘
+```
+
+- `Navigator.pushNamed()` pushes a new route onto the stack.
+- `Navigator.pop()` removes the top route, returning to the previous screen.
+
+### What Are Named Routes?
+
+Named routes map human-readable strings (`'/'`, `'/second'`) to widget builders inside `MaterialApp.routes`. This centralises navigation configuration, avoids inline `MaterialPageRoute` boilerplate, and makes deep-linking straightforward.
+
+### Route Configuration (`main.dart`)
+
+```dart
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const HomeScreen(),
+        '/second': (context) => const SecondScreen(),
+      },
+    );
+  }
+}
+```
+
+### HomeScreen (`home_screen.dart`)
+
+```dart
+ElevatedButton(
+  onPressed: () {
+    Navigator.pushNamed(
+      context,
+      '/second',
+      arguments: 'Hello from Home Screen!',
+    );
+  },
+  child: const Text('Go to Second Screen'),
+),
+```
+
+### SecondScreen (`second_screen.dart`)
+
+```dart
+// Safely extract the argument passed from HomeScreen.
+final message =
+    ModalRoute.of(context)!.settings.arguments as String? ??
+    'No message received';
+
+// ...
+
+ElevatedButton(
+  onPressed: () {
+    Navigator.pop(context);
+  },
+  child: const Text('Back to Home'),
+),
+```
+
+### Screen Structure
+
+**HomeScreen**
+
+```
+Scaffold
+┣ AppBar (title: "Home Screen")
+┗ Body
+  ┗ Center
+    ┗ Column
+      ┣ Text ("Welcome to UniSphere!")
+      ┗ ElevatedButton ("Go to Second Screen")
+```
+
+**SecondScreen**
+
+```
+Scaffold
+┣ AppBar (title: "Second Screen")
+┗ Body
+  ┗ Center
+    ┗ Column
+      ┣ Text ("You are on the Second Screen")
+      ┣ Text (received message)
+      ┗ ElevatedButton ("Back to Home")
+```
+
+### Demo Screenshots
+
+| State | Screenshot |
+|-------|------------|
+| Home Screen | ![Home Screen](screenshots/nav_home_screen.png) |
+| Second Screen (with argument) | ![Second Screen](screenshots/nav_second_screen.png) |
+| Navigation in action | ![Navigation Demo](screenshots/nav_in_action.png) |
+
+### Reflection
+
+**How Navigator manages the stack** — Every call to `pushNamed` adds a route to the top of an internal stack maintained by the `Navigator` widget. The currently visible screen is always the topmost route. When the user taps "Back" or the system back button, `pop` removes the top route, revealing the previous screen along with any state it held. This model is predictable, easy to debug, and maps naturally to user expectations of linear navigation.
+
+**Benefits of named routes in larger apps** — Named routes decouple navigation intent from route construction. Screens no longer need to import each other's classes directly — they just reference a string key. This makes the route table in `main.dart` the single source of truth for all destinations, simplifies refactoring (rename a screen without touching every caller), and lays the groundwork for deep-linking, analytics tracking, and route guards that can be applied uniformly in one place.
 
 ---
 
