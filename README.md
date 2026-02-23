@@ -1,70 +1,92 @@
-# 📱 UniSphere  
-### Centralized Platform for College Clubs & Student Communities  
+# UniSphere
+
+**Sprint 2 – Introduction to Flutter & Dart**
+
+A beginner-friendly Flutter application demonstrating core concepts: widget composition, stateful vs stateless widgets, and state management with `setState`.
 
 ---
 
-## 📌 Overview  
+## Folder Structure
 
-**UniSphere** is a cross-platform mobile application designed to simplify how college clubs and student communities manage events, communication, and participation.
+```
+lib/
+├── main.dart                      # App entry point (StatelessWidget)
+├── screens/
+│   └── welcome_screen.dart        # Welcome screen (StatefulWidget)
+└── widgets/                       # Reusable widgets (reserved for future sprints)
+```
 
-Built using **Flutter** and **Firebase**, the platform centralizes registrations, announcements, and attendance tracking into one unified system.
-
----
-
-## 🚩 Problem Statement  
-
-College clubs and student communities currently manage:
-
-- 📢 Announcements across scattered platforms  
-- 📝 Event registrations through multiple forms  
-- 📊 Attendance tracking manually or separately  
-
-This fragmented approach makes coordination inefficient, confusing, and frustrating.
-
-### ❓ How might we centralize event registrations, announcements, and attendance in one place?
+| Path | Purpose |
+|------|---------|
+| `lib/main.dart` | Configures `MaterialApp`, disables the debug banner, and sets `WelcomeScreen` as the home route. |
+| `lib/screens/welcome_screen.dart` | A `StatefulWidget` that toggles button text on press using `setState`. |
+| `lib/widgets/` | Empty directory scaffolded for custom reusable widgets in upcoming sprints. |
 
 ---
 
-## ✅ Solution  
+## Setup Instructions
 
-UniSphere provides a **single digital platform** where:
+### Prerequisites
 
-- 📢 Clubs can post announcements  
-- 📝 Students can register for events  
-- 📊 Attendance can be tracked digitally  
-- 🔔 Real-time updates keep everyone informed  
+- Flutter SDK installed and on your PATH
+- Chrome or a Windows desktop environment for running the app
 
-By combining cross-platform access with real-time backend services, UniSphere simplifies coordination and improves engagement.
+### 1. Verify your environment
 
----
+```bash
+flutter doctor
+```
 
-## 🛠 Tech Stack  
+### 2. Install dependencies
 
-### 🎨 Frontend
-- Flutter  
-- Dart  
+```bash
+flutter pub get
+```
 
-### 🔥 Backend
-- Firebase Authentication  
-- Cloud Firestore  
-- Firebase Storage  
-- Cloud Functions  
+### 3. Run the app
 
-### ☁️ Infrastructure & DevOps
-- Google Cloud  
-- Firebase Hosting  
-- GitHub Actions (CI/CD)
+```bash
+# Run on Chrome
+flutter run -d chrome
 
----
-
-## 🌟 Key Highlights  
-
-- 📱 Cross-platform (Android, iOS, Web)  
-- ⚡ Real-time updates  
-- 🔐 Secure authentication  
-- ☁️ Cloud scalable architecture  
-- 🧩 Single unified system for campus coordination  
+# Run on Windows desktop
+flutter run -d windows
+```
 
 ---
 
-> One Platform. One Community. Seamless Coordination. 🚀
+## Demo
+
+<!-- Replace with an actual screenshot after running the app -->
+![App Screenshot](screenshots/demo.png)
+
+---
+
+## Reflection
+
+### What I learned
+
+**Flutter Widgets**
+Flutter UIs are built entirely from widgets. `StatelessWidget` is used for static content that never changes (like `MyApp`), while `StatefulWidget` is used when the UI needs to react to user interaction (like `WelcomeScreen`).
+
+**State Management with setState**
+Calling `setState` tells Flutter to re-run the `build` method, updating only the parts of the widget tree that changed. In this sprint, a boolean `isPressed` toggles the button label between "Press Me" and "Welcome Back!" — a minimal but clear demonstration of reactive UI updates.
+
+**Dart Language Fundamentals**
+Dart's `const` constructors allow Flutter to optimize widget rebuilds by reusing unchanged objects. Named parameters with `super.key` simplify boilerplate. The language's strong typing and null safety reduce runtime errors.
+
+**Modular Project Structure**
+Separating screens and widgets into dedicated folders keeps the codebase organized and scalable. Even at this early stage, the structure is ready to accommodate new features in future sprints.
+
+---
+
+## Tech Stack
+
+### Frontend
+- Flutter
+- Dart
+
+### Backend (planned)
+- Firebase Authentication
+- Cloud Firestore
+- Firebase Storage
