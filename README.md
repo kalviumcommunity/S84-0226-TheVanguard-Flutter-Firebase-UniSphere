@@ -1,8 +1,8 @@
-# UniSphere – Building Responsive Mobile Interfaces
+# UniSphere – Flutter Widget Tree & Reactive UI Demo
 
 **Sprint 2 – Introduction to Flutter & Dart**
 
-A beginner-friendly Flutter application demonstrating responsive UI design using `MediaQuery`, `LayoutBuilder`, `Wrap`, `AspectRatio`, `FittedBox`, `Expanded`, and `Flexible`.
+A production-quality Flutter application demonstrating responsive UI design and Flutter's reactive UI model. The project includes a responsive layout that adapts between phone and tablet form factors, as well as a dedicated demo screen that illustrates the Widget Tree structure and state management with `setState()`.
 
 ---
 
@@ -13,15 +13,17 @@ lib/
 ├── main.dart                        # App entry point (StatelessWidget)
 ├── screens/
 │   ├── welcome_screen.dart          # Welcome screen (StatefulWidget)
-│   └── responsive_home.dart         # Responsive home screen
+│   ├── responsive_home.dart         # Responsive home screen (StatefulWidget)
+│   └── widget_tree_demo.dart        # Widget Tree & Reactive UI demo (StatefulWidget)
 └── widgets/                         # Reusable widgets (reserved for future sprints)
 ```
 
 | Path | Purpose |
-|------|---------|
+|------|---------||
 | `lib/main.dart` | Configures `MaterialApp`, disables the debug banner, and sets `ResponsiveHome` as the home route. |
 | `lib/screens/welcome_screen.dart` | A `StatefulWidget` that toggles button text on press using `setState`. |
-| `lib/screens/responsive_home.dart` | Responsive layout that adapts between single-column (phone) and two-column (tablet) using `MediaQuery`. |
+| `lib/screens/responsive_home.dart` | Responsive layout — single-column on phones, two-column `GridView` on tablets. |
+| `lib/screens/widget_tree_demo.dart` | Demonstrates the Widget Tree hierarchy and Flutter's reactive UI model with a counter. |
 | `lib/widgets/` | Empty directory scaffolded for custom reusable widgets in upcoming sprints. |
 
 ---
@@ -57,49 +59,154 @@ flutter run -d windows
 
 ---
 
-## Demo
+## Responsiveness Implementation
 
-<!-- Replace with actual screenshots after running the app -->
-| Phone | Tablet |
-|-------|--------|
-| ![Phone](screenshots/phone.png) | ![Tablet](screenshots/tablet.png) |
+### MediaQuery Usage
+
+`MediaQuery` reads global device metrics to derive a breakpoint:
+
+```dart
+@override
+Widget build(BuildContext context) {
+  double screenWidth = MediaQuery.of(context).size.width;
+  double screenHeight = MediaQuery.of(context).size.height;
+  bool isTablet = screenWidth > 600;
+  // ...
+}
+```
+
+- **Phone (≤ 600 px)** — single-column card list, font size ~16, compact padding.
+- **Tablet (> 600 px)** — two-column `GridView` with `crossAxisCount: 2`, font size ~22, generous padding.
+
+### LayoutBuilder Usage
+
+`LayoutBuilder` provides parent constraints so card widths and grid dimensions are calculated proportionally:
+
+```dart
+Widget buildMainContent({ ... }) {
+  return LayoutBuilder(
+    builder: (context, constraints) {
+      if (isTablet) {
+        return GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: 2.2,
+          ),
+          itemBuilder: (context, index) => buildFeatureCard(...),
+        );
+      }
+      return SingleChildScrollView(
+        child: Column(children: [ /* single-column cards */ ]),
+      );
+    },
+  );
+}
+```
+
+### Mandatory Widgets Checklist
+
+| Widget | Where Used |
+|--------|-----------|
+| `MediaQuery` | `build()` — reads `screenWidth`, `screenHeight` |
+| `LayoutBuilder` | `buildMainContent()` — supplies parent constraints |
+| `GridView` | Tablet path — two-column card grid |
+| `Wrap` | Phone path — single-column card layout |
+| `AspectRatio` | `buildFeatureCard()` — consistent card proportions |
+| `FittedBox` | Section title, card title, footer button text |
+| `Expanded` | Card text column, main content area |
+| `Flexible` | Card icon, card description text |
 
 ---
 
-## Responsiveness Explained
+## Screenshots
 
-`ResponsiveHome` adapts its layout at runtime using `MediaQuery` to read the device dimensions and a simple boolean breakpoint:
+<!-- Replace with actual screenshots after running the app -->
 
-```dart
-double screenWidth = MediaQuery.of(context).size.width;
-bool isTablet = screenWidth > 600;
-```
-
-- **Phone (≤ 600 px)** — single-column card list, smaller font sizes, compact padding.
-- **Tablet (> 600 px)** — two-column `Wrap` layout, larger fonts, generous padding.
-
-`LayoutBuilder` supplies parent constraints so card widths are calculated proportionally rather than hard-coded. `AspectRatio` keeps card proportions consistent across orientations, while `FittedBox` prevents text overflow. `Expanded` and `Flexible` eliminate `RenderFlex` overflow errors in both portrait and landscape.
+| Device | Orientation | Screenshot |
+|--------|-------------|------------|
+| Pixel 6 | Portrait | ![Pixel 6 Portrait](screenshots/pixel6_portrait.png) |
+| Pixel 6 | Landscape | ![Pixel 6 Landscape](screenshots/pixel6_landscape.png) |
+| Tablet | Portrait | ![Tablet Portrait](screenshots/tablet_portrait.png) |
+| Tablet | Landscape | ![Tablet Landscape](screenshots/tablet_landscape.png) |
 
 ---
 
 ## Reflection
 
-### What I learned
+### Challenges Faced
 
-**Flutter Widgets**
-Flutter UIs are built entirely from widgets. `StatelessWidget` is used for static content that never changes (like `MyApp`), while `StatefulWidget` is used when the UI needs to react to user interaction (like `WelcomeScreen` and `ResponsiveHome`).
+- **Preventing RenderFlex overflow** — Cards inside a `Column` caused overflow in landscape mode. Wrapping the content area with `Expanded` and using `Flexible` inside cards resolved this without fixed heights.
+- **Choosing between GridView and Wrap** — `GridView` handles the two-column tablet layout naturally with `crossAxisCount`, but it conflicts with nested scrolling inside a `Column`. Using `GridView` as the direct child of `Expanded` (tablet path) and `SingleChildScrollView` with `Wrap` (phone path) avoids nested scroll conflicts entirely.
+- **Text scaling across form factors** — Hard-coded font sizes clip on narrow devices. `FittedBox` with `BoxFit.scaleDown` ensures text never overflows while keeping it as large as space allows.
 
-**Responsive Design with MediaQuery & LayoutBuilder**
-`MediaQuery` provides global device metrics (screen width, height, padding). `LayoutBuilder` provides local parent constraints. Combining both lets the UI adapt fluidly — switching column counts, padding, and font sizes without hard-coded pixel values.
+### How Responsiveness Improves Usability
 
-**State Management with setState**
-Calling `setState` tells Flutter to re-run the `build` method, updating only the parts of the widget tree that changed.
+Responsive design ensures the same codebase delivers a comfortable experience on every screen size. Phone users see a focused single-column flow that's easy to scan with one hand, while tablet users benefit from a two-column grid that fills the larger viewport without wasted space. Dynamic padding and font scaling maintain visual hierarchy regardless of device dimensions or orientation, reducing cognitive load and preventing the layout-break issues that drive users away.
 
-**Dart Language Fundamentals**
-Dart's `const` constructors allow Flutter to optimize widget rebuilds by reusing unchanged objects. Named parameters with `super.key` simplify boilerplate. The language's strong typing and null safety reduce runtime errors.
+---
 
-**Modular Project Structure**
-Separating screens and widgets into dedicated folders keeps the codebase organized and scalable. Helper methods like `buildHeader()`, `buildMainContent()`, and `buildFooter()` keep the widget tree readable.
+## Widget Tree & Reactive UI Demo
+
+The `WidgetTreeDemo` screen (`lib/screens/widget_tree_demo.dart`) is a self-contained demo that showcases two core Flutter concepts:
+
+1. **Widget Tree structure** — how widgets nest to form the UI.
+2. **Reactive UI model** — how `setState()` triggers efficient rebuilds.
+
+### Widget Tree Hierarchy
+
+```
+MaterialApp
+└── Scaffold
+    ├── AppBar
+    │     └── Text ("Widget Tree Demo")
+    └── Body
+        └── Center
+            └── Column
+                ├── CircleAvatar (profile image placeholder)
+                ├── Text ("UniSphere Counter")
+                ├── Text (counter display — rebuilds on state change)
+                └── ElevatedButton ("Increment Counter")
+```
+
+### Demo Screenshots
+
+| State | Screenshot |
+|-------|------------|
+| Initial UI (counter = 0) | ![Initial State](screenshots/widget_tree_initial.png) |
+| After button press (counter incremented) | ![Updated State](screenshots/widget_tree_updated.png) |
+
+### What Is a Widget Tree?
+
+In Flutter every UI element is a **widget**, and widgets compose into a tree. The root widget (e.g., `MaterialApp`) contains child widgets (`Scaffold`, `AppBar`, `Column`, …), and each child can contain further children. This tree is the single source of truth for what appears on screen. Flutter walks the tree to build the corresponding **Element** tree and **RenderObject** tree that handle layout and painting.
+
+### How Does Flutter's Reactive Model Work?
+
+Flutter follows a **declarative** UI paradigm:
+
+1. State is stored inside a `State` object (e.g., `_counter`).
+2. When the user interacts with the app (button press), the handler calls `setState()`.
+3. `setState()` marks the enclosing `State` object as *dirty*.
+4. On the next frame, Flutter calls `build()` again, producing a new widget description.
+5. Flutter diffs the new tree against the old tree and applies only the minimal changes to the render layer.
+
+```dart
+void _incrementCounter() {
+  setState(() {
+    _counter++;
+  });
+}
+```
+
+### Why Does Flutter Rebuild Only Affected Widgets?
+
+Flutter uses an **Element reconciliation** algorithm similar to React's virtual DOM diffing:
+
+- When `setState()` is called, only the `State` object's `build()` method is re-executed — not the entire app.
+- Flutter compares the new widget tree with the previous one element by element.
+- Widgets whose configuration has **not** changed (same type and key) are skipped; their existing render objects are reused.
+- Only widgets with **new data** (e.g., the `Text` widget showing the counter value) are updated in the render tree.
+
+This selective rebuilding keeps frame times low and makes Flutter performant even with complex UIs.
 
 ---
 
