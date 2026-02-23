@@ -9,10 +9,26 @@ class ResponsiveHome extends StatefulWidget {
 
 class _ResponsiveHomeState extends State<ResponsiveHome> {
   final List<_FeatureItem> _features = const [
-    _FeatureItem(icon: Icons.dashboard, title: 'Dashboard', description: 'View your activity overview'),
-    _FeatureItem(icon: Icons.event, title: 'Events', description: 'Browse and register for events'),
-    _FeatureItem(icon: Icons.group, title: 'Communities', description: 'Connect with student clubs'),
-    _FeatureItem(icon: Icons.notifications_active, title: 'Announcements', description: 'Stay updated in real time'),
+    _FeatureItem(
+      icon: Icons.dashboard,
+      title: 'Dashboard',
+      description: 'View your activity overview and analytics',
+    ),
+    _FeatureItem(
+      icon: Icons.event,
+      title: 'Events',
+      description: 'Browse and register for upcoming events',
+    ),
+    _FeatureItem(
+      icon: Icons.group,
+      title: 'Communities',
+      description: 'Connect with student clubs and groups',
+    ),
+    _FeatureItem(
+      icon: Icons.notifications_active,
+      title: 'Announcements',
+      description: 'Stay updated with real-time alerts',
+    ),
   ];
 
   @override
@@ -33,7 +49,7 @@ class _ResponsiveHomeState extends State<ResponsiveHome> {
                 isTablet: isTablet,
               ),
             ),
-            buildFooter(isTablet: isTablet, screenWidth: screenWidth),
+            buildFooter(isTablet: isTablet),
           ],
         ),
       ),
@@ -53,10 +69,30 @@ class _ResponsiveHomeState extends State<ResponsiveHome> {
     required bool isTablet,
   }) {
     double padding = isTablet ? 24.0 : 12.0;
-    double titleFontSize = isTablet ? 22.0 : 16.0;
+    double fontSize = isTablet ? 22.0 : 16.0;
 
     return LayoutBuilder(
       builder: (context, constraints) {
+        if (isTablet) {
+          return GridView.builder(
+            padding: EdgeInsets.all(padding),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: padding,
+              mainAxisSpacing: padding,
+              childAspectRatio: 2.2,
+            ),
+            itemCount: _features.length,
+            itemBuilder: (context, index) {
+              return buildFeatureCard(
+                feature: _features[index],
+                isTablet: isTablet,
+                fontSize: fontSize,
+              );
+            },
+          );
+        }
+
         return SingleChildScrollView(
           padding: EdgeInsets.all(padding),
           child: Column(
@@ -68,7 +104,7 @@ class _ResponsiveHomeState extends State<ResponsiveHome> {
                 child: Text(
                   'Explore Features',
                   style: TextStyle(
-                    fontSize: titleFontSize + 6,
+                    fontSize: fontSize + 6,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -77,20 +113,16 @@ class _ResponsiveHomeState extends State<ResponsiveHome> {
               Wrap(
                 spacing: padding,
                 runSpacing: padding,
-                children: List.generate(_features.length, (index) {
-                  double cardWidth = isTablet
-                      ? (constraints.maxWidth - padding * 3) / 2
-                      : constraints.maxWidth - padding * 2;
-
+                children: _features.map((feature) {
                   return SizedBox(
-                    width: cardWidth,
-                    child: _buildFeatureCard(
-                      feature: _features[index],
+                    width: constraints.maxWidth - padding * 2,
+                    child: buildFeatureCard(
+                      feature: feature,
                       isTablet: isTablet,
-                      titleFontSize: titleFontSize,
+                      fontSize: fontSize,
                     ),
                   );
-                }),
+                }).toList(),
               ),
             ],
           ),
@@ -99,16 +131,18 @@ class _ResponsiveHomeState extends State<ResponsiveHome> {
     );
   }
 
-  Widget _buildFeatureCard({
+  Widget buildFeatureCard({
     required _FeatureItem feature,
     required bool isTablet,
-    required double titleFontSize,
+    required double fontSize,
   }) {
     return AspectRatio(
-      aspectRatio: isTablet ? 2.5 : 3.0,
+      aspectRatio: isTablet ? 2.2 : 3.0,
       child: Card(
         elevation: 3,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
         child: Padding(
           padding: EdgeInsets.all(isTablet ? 16.0 : 12.0),
           child: Row(
@@ -137,7 +171,7 @@ class _ResponsiveHomeState extends State<ResponsiveHome> {
                       child: Text(
                         feature.title,
                         style: TextStyle(
-                          fontSize: titleFontSize,
+                          fontSize: fontSize,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -147,7 +181,7 @@ class _ResponsiveHomeState extends State<ResponsiveHome> {
                       child: Text(
                         feature.description,
                         style: TextStyle(
-                          fontSize: titleFontSize - 2,
+                          fontSize: fontSize - 2,
                           color: Colors.grey[600],
                         ),
                         overflow: TextOverflow.ellipsis,
@@ -164,7 +198,7 @@ class _ResponsiveHomeState extends State<ResponsiveHome> {
     );
   }
 
-  Widget buildFooter({required bool isTablet, required double screenWidth}) {
+  Widget buildFooter({required bool isTablet}) {
     double horizontalPadding = isTablet ? 32.0 : 16.0;
     double fontSize = isTablet ? 20.0 : 16.0;
 
