@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 /// A demo screen that illustrates Flutter's Widget Tree structure
@@ -33,6 +34,10 @@ class _WidgetTreeDemoState extends State<WidgetTreeDemo> {
     setState(() {
       _counter++;
     });
+
+    // Debug Console demo — logs counter value on each press.
+    // Open the Debug Console in VS Code (Ctrl+Shift+Y) to see output.
+    debugPrint('Counter updated to $_counter');
   }
 
   // ── Build ──────────────────────────────────────────────────────
@@ -62,12 +67,24 @@ class _WidgetTreeDemoState extends State<WidgetTreeDemo> {
             ),
             const SizedBox(height: 16),
 
-            // Name / title
+            // Name / title — change this text and save to see Hot Reload
             const Text(
               'UniSphere Counter',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 4),
+
+            // Hot Reload demo label — edit the string below, press Save,
+            // and the running app updates instantly without losing state.
+            const Text(
+              'Hot Reload Active',
+              style: TextStyle(
+                fontSize: 14,
+                fontStyle: FontStyle.italic,
+                color: Colors.deepPurple,
               ),
             ),
             const SizedBox(height: 8),

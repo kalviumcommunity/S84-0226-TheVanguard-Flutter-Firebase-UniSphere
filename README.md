@@ -313,6 +313,110 @@ class _InteractiveCounterState extends State<InteractiveCounter> {
 
 ---
 
+## Hot Reload, Debug Console & DevTools Demonstration
+
+This section documents how Flutter's development tools — **Hot Reload**, the **Debug Console**, and **Flutter DevTools** — were used during Sprint 2 development. All demonstrations are based on the existing `WidgetTreeDemo` screen ([lib/screens/widget_tree_demo.dart](lib/screens/widget_tree_demo.dart)).
+
+### What Is Hot Reload?
+
+Hot Reload injects updated source code into the running Dart VM and rebuilds the widget tree — **without** restarting the app or losing in-memory state. It typically completes in under one second, enabling a rapid edit-save-see cycle.
+
+### What Is the Debug Console?
+
+The Debug Console (VS Code: **Ctrl+Shift+Y**) displays runtime output from `debugPrint()` and framework messages. Unlike `print()`, `debugPrint()` throttles output to avoid dropped lines on slower devices, making it the recommended logging function during development.
+
+### What Is Flutter DevTools?
+
+Flutter DevTools is a browser-based suite of profiling and debugging tools that ships with the Flutter SDK. It includes a Widget Inspector, Performance overlay, Memory profiler, Network monitor, and more.
+
+---
+
+### Steps Performed
+
+#### 1. Hot Reload
+
+1. Ran the app with `flutter run -d chrome`.
+2. Opened `lib/screens/widget_tree_demo.dart`.
+3. Changed the subtitle text from `'Hot Reload Active'` to a new string (e.g., `'Hot Reload Working!'`).
+4. Pressed **Save** (Ctrl+S).
+5. The running app updated the text **instantly** — the counter value was preserved because Hot Reload does not reset state.
+
+**Code location (editable label for Hot Reload demo):**
+
+```dart
+// Hot Reload demo label — edit the string below, press Save,
+// and the running app updates instantly without losing state.
+const Text(
+  'Hot Reload Active',   // ← change this text and save
+  style: TextStyle(
+    fontSize: 14,
+    fontStyle: FontStyle.italic,
+    color: Colors.deepPurple,
+  ),
+),
+```
+
+#### 2. Debug Console
+
+Added `debugPrint()` inside the counter increment handler so every button press logs the new count:
+
+```dart
+void _incrementCounter() {
+  setState(() {
+    _counter++;
+  });
+
+  // Logs to the Debug Console on each press
+  debugPrint('Counter updated to $_counter');
+}
+```
+
+**Console output example:**
+
+```
+flutter: Counter updated to 1
+flutter: Counter updated to 2
+flutter: Counter updated to 3
+```
+
+#### 3. Flutter DevTools
+
+| Step | Action |
+|------|--------|
+| **Open DevTools** | While the app is running, press `Ctrl+Shift+P` in VS Code → type *"Open DevTools"* → select **Dart: Open DevTools**. Alternatively, click the DevTools icon in the status bar. |
+| **Widget Inspector** | Select the **Widget Inspector** tab. Click *"Select Widget Mode"* to tap any widget in the running app and see its position in the tree, constraints, and render details. |
+| **Performance tab** | Switch to the **Performance** tab. Interact with the app (press the counter button repeatedly). The frame rendering chart shows whether frames stay under the 16 ms budget (green) or exceed it (red jank frames). |
+| **Memory tab** | Switch to the **Memory** tab. Observe the Dart heap size. Trigger garbage collection with the GC button. Verify that no unexpected memory growth occurs during normal use. |
+
+---
+
+### Demo Screenshots
+
+| Screenshot | Description |
+|------------|-------------|
+| ![Hot Reload](screenshots/hot_reload_demo.png) | Running app after saving a text change — UI updated without restart |
+| ![Debug Console](screenshots/debug_console_logs.png) | Debug Console showing `debugPrint` output after button presses |
+| ![Widget Inspector](screenshots/devtools_widget_inspector.png) | DevTools Widget Inspector highlighting the counter `Text` widget |
+| ![Performance Tab](screenshots/devtools_performance.png) | DevTools Performance tab — frame rendering timeline |
+
+---
+
+### Reflection
+
+**How does Hot Reload improve productivity?**
+Hot Reload eliminates the compile-restart-navigate cycle that slows traditional mobile development. Developers can tweak layouts, styles, and logic and see results in under a second — all while the app keeps its current state. This shortens the feedback loop dramatically and encourages experimentation.
+
+**Why is Debug Console useful?**
+The Debug Console provides real-time visibility into app behavior without attaching a full debugger. `debugPrint()` statements placed at key execution points confirm that logic runs in the expected order with the expected values, making it easy to catch off-by-one errors, null references, or unintended code paths early.
+
+**How does DevTools help identify performance issues?**
+The Performance tab surfaces frame-level timing so developers can spot jank (frames exceeding 16 ms) immediately. The Widget Inspector reveals unnecessary rebuilds — if a widget that should be static keeps appearing in the rebuild list, it can be refactored into a `const` constructor or extracted into a `StatelessWidget`. The Memory tab catches leaks before they reach production.
+
+**How would these tools help in team development?**
+In a team setting, Hot Reload lets UI designers and developers iterate on screens together in real time. Standardising `debugPrint()` logging with clear prefixes makes shared debugging sessions more productive. DevTools performance baselines can be committed to CI pipelines, ensuring that no pull request introduces regressions above an agreed frame-budget threshold.
+
+---
+
 ## Tech Stack
 
 ### Frontend
