@@ -1,4 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
+import '../services/auth_service.dart';
+import '../services/firestore_service.dart';
 
 /// Dummy event data used across the Campus Connect screens.
 class EventData {
@@ -151,6 +156,134 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+  final AuthService _authService = AuthService();
+  final FirestoreService _firestoreService = FirestoreService();
+
+  User? get _user => _authService.currentUser;
+
+  // ── Logout ───────────────────────────────────────────────────────────────
+
+  Future<void> _logout() async {
+    await _authService.signOut();
+    if (mounted) {
+      Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+    }
+  }
+
+  // ── Note dialog (add / edit) ─────────────────────────────────────────────
+
+  void _showNoteDialog({
+    String? noteId,
+    String? existingTitle,
+    String? existingContent,
+  }) {
+    final titleCtrl = TextEditingController(text: existingTitle ?? '');
+    final contentCtrl = TextEditingController(text: existingContent ?? '');
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(noteId == null ? 'Add Note' : 'Edit Note'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: titleCtrl,
+              textInputAction: TextInputAction.next,
+              decoration: const InputDecoration(
+                labelText: 'Title',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: contentCtrl,
+              maxLines: 3,
+              decoration: const InputDecoration(
+                labelText: 'Content',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.deepPurple,
+              foregroundColor: Colors.white,
+            ),
+            onPressed: () async {
+              final title = titleCtrl.text.trim();
+              final content = contentCtrl.text.trim();
+              if (title.isEmpty) return;
+              Navigator.pop(ctx);
+              final uid = _user?.uid;
+              if (uid == null) return;
+              if (noteId == null) {
+                await _firestoreService.addNote(uid, title, content);
+              } else {
+                await _firestoreService.updateNote(
+                  uid,
+                  noteId,
+                  title: title,
+                  content: content,
+                );
+              }
+            },
+            child: Text(noteId == null ? 'Add' : 'Save'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ── Delete confirmation ──────────────────────────────────────────────────
+
+  Future<void> _deleteNote(String noteId) async {
+    final uid = _user?.uid;
+    if (uid == null) return;
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Delete Note'),
+        content: const Text('This note will be permanently deleted.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+            ),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+    if (confirm == true) {
+      await _firestoreService.deleteNote(uid, noteId);
+    }
+  }
+
+  // ── Helpers ──────────────────────────────────────────────────────────────
+
+  String _formatTimestamp(Timestamp ts) {
+    final dt = ts.toDate().toLocal();
+    final now = DateTime.now();
+    final diff = now.difference(dt);
+    if (diff.inMinutes < 1) return 'just now';
+    if (diff.inHours < 1) return '${diff.inMinutes}m ago';
+    if (diff.inDays < 1) return '${diff.inHours}h ago';
+    return '${dt.day}/${dt.month}/${dt.year}';
+  }
+
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
@@ -177,7 +310,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
               Navigator.pushNamed(context, '/attendance');
             },
           ),
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'Logout',
+            onPressed: _logout,
+          ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: Colors.deepPurple,
+        foregroundColor: Colors.white,
+        icon: const Icon(Icons.note_add),
+        label: const Text('Add Note'),
+        onPressed: () => _showNoteDialog(),
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(
@@ -187,6 +332,202 @@ class _DashboardScreenState extends State<DashboardScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // ── Welcome banner ──────────────────────────────────────────────
+            if (_user != null) ...[
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.deepPurple.shade50,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.deepPurple.shade100),
+                ),
+                child: Row(
+                  children: [
+                    const CircleAvatar(
+                      backgroundColor: Colors.deepPurple,
+                      child: Icon(Icons.person, color: Colors.white),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Welcome back!',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                            ),
+                          ),
+                          Text(
+                            _user!.email ?? '',
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Colors.grey.shade700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+            ],
+
+            // ── My Notes (Firestore, real-time) ─────────────────────────────
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'My Notes',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                TextButton.icon(
+                  onPressed: () => _showNoteDialog(),
+                  icon: const Icon(Icons.add, size: 18),
+                  label: const Text('Add'),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            if (_user == null)
+              const Text('Please log in to see your notes.')
+            else
+              StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                stream: _firestoreService.notesStream(_user!.uid),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 24),
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  }
+                  final docs = snapshot.data?.docs ?? [];
+                  if (docs.isEmpty) {
+                    return Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(vertical: 24),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade50,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.grey.shade200),
+                      ),
+                      child: Column(
+                        children: [
+                          Icon(
+                            Icons.sticky_note_2_outlined,
+                            size: 42,
+                            color: Colors.grey.shade400,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'No notes yet. Tap + Add to create one.',
+                            style: TextStyle(color: Colors.grey.shade500),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: docs.length,
+                    itemBuilder: (context, index) {
+                      final doc = docs[index];
+                      final data = doc.data();
+                      final noteId = doc.id;
+                      final title = data['title'] as String? ?? '';
+                      final content = data['content'] as String? ?? '';
+                      final ts = data['updatedAt'] as Timestamp?;
+                      final updatedAt =
+                          ts != null ? _formatTimestamp(ts) : '';
+                      return Card(
+                        margin: const EdgeInsets.only(bottom: 10),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        elevation: 1,
+                        child: ListTile(
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                          title: Text(
+                            title,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (content.isNotEmpty)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 4),
+                                  child: Text(
+                                    content,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: Colors.grey.shade700,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                ),
+                              if (updatedAt.isNotEmpty)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 4),
+                                  child: Text(
+                                    'Updated $updatedAt',
+                                    style: TextStyle(
+                                      color: Colors.grey.shade500,
+                                      fontSize: 11,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.edit_outlined,
+                                  size: 20,
+                                ),
+                                tooltip: 'Edit',
+                                onPressed: () => _showNoteDialog(
+                                  noteId: noteId,
+                                  existingTitle: title,
+                                  existingContent: content,
+                                ),
+                              ),
+                              IconButton(
+                                icon: Icon(
+                                  Icons.delete_outline,
+                                  size: 20,
+                                  color: Colors.red.shade400,
+                                ),
+                                tooltip: 'Delete',
+                                onPressed: () => _deleteNote(noteId),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            const SizedBox(height: 24),
+
             // ── Upcoming Events ────────────────────────────
             const Text(
               'Upcoming Events',
@@ -246,6 +587,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 return _AnnouncementTile(announcement: item);
               },
             ),
+            const SizedBox(height: 80), // bottom padding for FAB
           ],
         ),
       ),
