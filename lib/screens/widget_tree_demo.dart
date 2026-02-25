@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 /// A demo screen that illustrates Flutter's Widget Tree structure
