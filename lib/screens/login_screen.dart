@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 /// A simulated login screen with email and password fields.
 /// No real authentication — navigates to DashboardScreen on valid input.
+/// Uses centralized theming — no repeated style blocks.
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -29,7 +30,6 @@ class _LoginScreenState extends State<LoginScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Please fill in all fields.'),
-          behavior: SnackBarBehavior.floating,
         ),
       );
       return;
@@ -45,16 +45,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final double horizontalPadding = screenWidth > 600 ? 80.0 : 24.0;
+    final theme = Theme.of(context);
+    final screenWidth = MediaQuery.of(context).size.width;
+    final horizontalPadding = screenWidth > 600 ? 80.0 : 24.0;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Login'),
-        centerTitle: true,
-        backgroundColor: Colors.deepPurple,
-        foregroundColor: Colors.white,
-      ),
+      appBar: AppBar(title: const Text('Login')),
       body: Center(
         child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(
@@ -65,42 +61,33 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Header
-              const Text(
+              // ── Header ──
+              Text(
                 'Welcome Back',
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: theme.textTheme.headlineMedium,
               ),
               const SizedBox(height: 6),
               Text(
                 'Sign in to continue',
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 15,
-                  color: Colors.grey.shade600,
-                ),
+                style: theme.textTheme.bodyMedium,
               ),
               const SizedBox(height: 36),
 
-              // Email field
+              // ── Email field ──
               TextField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.next,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Email',
-                  prefixIcon: const Icon(Icons.email_outlined),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+                  prefixIcon: Icon(Icons.email_outlined),
                 ),
               ),
               const SizedBox(height: 18),
 
-              // Password field
+              // ── Password field ──
               TextField(
                 controller: _passwordController,
                 obscureText: _obscurePassword,
@@ -116,52 +103,36 @@ class _LoginScreenState extends State<LoginScreen> {
                           : Icons.visibility,
                     ),
                     onPressed: () {
-                      setState(() {
-                        _obscurePassword = !_obscurePassword;
-                      });
+                      setState(() => _obscurePassword = !_obscurePassword);
                     },
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
                   ),
                 ),
               ),
               const SizedBox(height: 28),
 
-              // Login button
+              // ── Login button ──
               ElevatedButton(
                 onPressed: _handleLogin,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepPurple,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                child: const Text(
-                  'Login',
-                  style: TextStyle(fontSize: 17),
-                ),
+                child: const Text('Login'),
               ),
               const SizedBox(height: 18),
 
-              // Sign up link
+              // ── Sign up link ──
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     "Don't have an account? ",
-                    style: TextStyle(color: Colors.grey.shade600),
+                    style: theme.textTheme.bodyMedium,
                   ),
                   GestureDetector(
                     onTap: () {
                       Navigator.pushReplacementNamed(context, '/signup');
                     },
-                    child: const Text(
+                    child: Text(
                       'Sign Up',
                       style: TextStyle(
-                        color: Colors.deepPurple,
+                        color: theme.colorScheme.primary,
                         fontWeight: FontWeight.w600,
                       ),
                     ),

@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 
+import '../main.dart';
+
 /// The initial entry point of the app — displays the app name,
 /// tagline, and buttons to navigate to Login or Sign Up.
+/// Uses centralized theming for a futuristic look.
 class LandingScreen extends StatelessWidget {
   const LandingScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final double horizontalPadding = screenWidth > 600 ? 80.0 : 32.0;
+    final theme = Theme.of(context);
+    final screenWidth = MediaQuery.of(context).size.width;
+    final horizontalPadding = screenWidth > 600 ? 80.0 : 32.0;
 
     return Scaffold(
       body: Center(
@@ -20,87 +24,87 @@ class LandingScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // App icon
-              Container(
-                width: 100,
-                height: 100,
-                decoration: BoxDecoration(
-                  color: Colors.deepPurple,
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                child: const Icon(
-                  Icons.school,
-                  size: 52,
-                  color: Colors.white,
+              // ── Animated app icon ──
+              TweenAnimationBuilder<double>(
+                tween: Tween(begin: 0.0, end: 1.0),
+                duration: const Duration(milliseconds: 700),
+                curve: Curves.easeOutBack,
+                builder: (context, value, child) {
+                  return Transform.scale(
+                    scale: value,
+                    child: child,
+                  );
+                },
+                child: Container(
+                  width: 110,
+                  height: 110,
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [
+                        UniSphereTheme.primaryColor,
+                        UniSphereTheme.primaryDark,
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(28),
+                    boxShadow: [
+                      BoxShadow(
+                        color: UniSphereTheme.primaryColor.withAlpha(60),
+                        blurRadius: 24,
+                        offset: const Offset(0, 10),
+                      ),
+                    ],
+                  ),
+                  child: const Icon(
+                    Icons.school_rounded,
+                    size: 52,
+                    color: Colors.white,
+                  ),
                 ),
               ),
-              const SizedBox(height: 28),
+              const SizedBox(height: 32),
 
-              // App name
-              const Text(
+              // ── App name ──
+              Text(
                 'UniSphere',
-                style: TextStyle(
-                  fontSize: 34,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.deepPurple,
+                style: theme.textTheme.headlineLarge?.copyWith(
+                  color: theme.colorScheme.primary,
+                  letterSpacing: -0.5,
                 ),
               ),
               const SizedBox(height: 10),
 
-              // Tagline
+              // ── Tagline ──
               Text(
                 'Centralizing college events\nand communication.',
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
-                  height: 1.4,
-                  color: Colors.grey.shade600,
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  height: 1.5,
                 ),
               ),
-              const SizedBox(height: 48),
+              const SizedBox(height: 52),
 
-              // Login button
+              // ── Login button ──
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.pushNamed(context, '/login');
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepPurple,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  child: const Text(
-                    'Login',
-                    style: TextStyle(fontSize: 17),
-                  ),
+                  child: const Text('Login'),
                 ),
               ),
               const SizedBox(height: 14),
 
-              // Sign Up button
+              // ── Sign Up button ──
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton(
                   onPressed: () {
                     Navigator.pushNamed(context, '/signup');
                   },
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.deepPurple,
-                    side: const BorderSide(color: Colors.deepPurple),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  child: const Text(
-                    'Sign Up',
-                    style: TextStyle(fontSize: 17),
-                  ),
+                  child: const Text('Sign Up'),
                 ),
               ),
             ],

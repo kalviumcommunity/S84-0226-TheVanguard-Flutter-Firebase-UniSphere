@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
 
-/// Dummy event data used across the Campus Connect screens.
+import '../main.dart';
+import '../widgets/event_card.dart';
+import '../widgets/announcement_tile.dart';
+import '../widgets/empty_state.dart';
+
+// ═════════════════════════════════════════════════════════════════
+//  DATA MODELS — shared across screens
+// ═════════════════════════════════════════════════════════════════
+
+/// Dummy event data used across the UniSphere screens.
 class EventData {
   final int id;
   final String name;
@@ -139,10 +148,14 @@ const List<AnnouncementData> dummyAnnouncements = [
   ),
 ];
 
-/// The main dashboard / home screen for Campus Connect.
+// ═════════════════════════════════════════════════════════════════
+//  DASHBOARD SCREEN — upgraded with search, filters, polish
+// ═════════════════════════════════════════════════════════════════
+
+/// The main dashboard / home screen for UniSphere.
 ///
-/// Displays upcoming events and recent announcements using
-/// [ListView.builder] inside a scrollable layout.
+/// Displays upcoming events and recent announcements with
+/// search/filter, pull-to-refresh, and smooth scrolling.
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
 
@@ -151,220 +164,241 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    // Simulate initial data loading
+    Future.delayed(const Duration(milliseconds: 800), () {
+      if (mounted) setState(() => _isLoading = false);
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  /// Filters events by title based on user search query.
+  List<EventData> get _filteredEvents {
+    if (_searchQuery.isEmpty) return dummyEvents;
+    return dummyEvents
+        .where((e) =>
+            e.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+            e.club.toLowerCase().contains(_searchQuery.toLowerCase()))
+        .toList();
+  }
+
+  /// Simulates a pull-to-refresh action.
+  Future<void> _onRefresh() async {
+    setState(() => _isLoading = true);
+    await Future.delayed(const Duration(milliseconds: 800));
+    if (mounted) setState(() => _isLoading = false);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final double horizontalPadding = screenWidth > 600 ? 32.0 : 16.0;
+    final theme = Theme.of(context);
+    final screenWidth = MediaQuery.of(context).size.width;
+    final horizontalPadding = screenWidth > 600 ? 32.0 : 18.0;
+    final filteredEvents = _filteredEvents;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Campus Connect'),
-        centerTitle: true,
-        backgroundColor: Colors.deepPurple,
-        foregroundColor: Colors.white,
+        automaticallyImplyLeading: false,
+        title: const Text('UniSphere'),
         actions: [
+          // Dark mode toggle
           IconButton(
-            icon: const Icon(Icons.campaign),
-            tooltip: 'Announcements',
-            onPressed: () {
-              Navigator.pushNamed(context, '/announcements');
-            },
+            icon: Icon(
+              UniSphereApp.of(context)?.isDarkMode == true
+                  ? Icons.light_mode_rounded
+                  : Icons.dark_mode_rounded,
+            ),
+            tooltip: 'Toggle theme',
+            onPressed: () => UniSphereApp.of(context)?.toggleTheme(),
           ),
-          IconButton(
-            icon: const Icon(Icons.check_circle_outline),
-            tooltip: 'Attendance',
-            onPressed: () {
-              Navigator.pushNamed(context, '/attendance');
-            },
-          ),
+          const SizedBox(width: 4),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(
-          horizontal: horizontalPadding,
-          vertical: 16,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // ── Upcoming Events ────────────────────────────
-            const Text(
-              'Upcoming Events',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 12),
-            ListView.builder(
-              itemCount: dummyEvents.length,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemBuilder: (context, index) {
-                final event = dummyEvents[index];
-                return _EventCard(
-                  event: event,
-                  onTap: () {
-                    Navigator.pushNamed(
-                      context,
-                      '/event-details',
-                      arguments: event,
-                    );
-                  },
-                );
-              },
-            ),
-            const SizedBox(height: 24),
-
-            // ── Recent Announcements ──────────────────────
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Recent Announcements',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/announcements');
-                  },
-                  child: const Text('View All'),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            ListView.builder(
-              itemCount:
-                  dummyAnnouncements.length > 3 ? 3 : dummyAnnouncements.length,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemBuilder: (context, index) {
-                final item = dummyAnnouncements[index];
-                return _AnnouncementTile(announcement: item);
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// ── Private widgets ──────────────────────────────────────────────
-
-class _EventCard extends StatelessWidget {
-  final EventData event;
-  final VoidCallback onTap;
-
-  const _EventCard({required this.event, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 2,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(12),
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
+      body: RefreshIndicator(
+        onRefresh: _onRefresh,
+        color: theme.colorScheme.primary,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(
+            parent: BouncingScrollPhysics(),
+          ),
+          padding: EdgeInsets.symmetric(
+            horizontal: horizontalPadding,
+            vertical: 20,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Date badge
-              Container(
-                width: 56,
-                height: 56,
-                decoration: BoxDecoration(
-                  color: Colors.deepPurple.shade50,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Center(
-                  child: Text(
-                    event.date.split(' ')[1].replaceAll(',', ''),
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.deepPurple.shade700,
-                    ),
+              // ── Search Bar ──────────────────────────────────
+              _buildSearchBar(theme),
+              const SizedBox(height: 24),
+
+              // ── Upcoming Events section ─────────────────────
+              _buildSectionHeader(
+                theme,
+                title: 'Upcoming Events',
+                icon: Icons.event_rounded,
+              ),
+              const SizedBox(height: 14),
+
+              // Event list or empty/loading state
+              if (_isLoading)
+                ..._buildShimmerCards(3)
+              else if (filteredEvents.isEmpty)
+                const EmptyState(
+                  icon: Icons.search_off_rounded,
+                  title: 'No events found',
+                  subtitle: 'Try a different search term',
+                )
+              else
+                ...filteredEvents.asMap().entries.map((entry) {
+                  return EventCard(
+                    event: entry.value,
+                    index: entry.key,
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        '/event-details',
+                        arguments: entry.value,
+                      );
+                    },
+                  );
+                }),
+              const SizedBox(height: 28),
+
+              // ── Recent Announcements section ────────────────
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _buildSectionHeader(
+                    theme,
+                    title: 'Announcements',
+                    icon: Icons.campaign_rounded,
                   ),
-                ),
+                  TextButton.icon(
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/announcements');
+                    },
+                    icon: const Text('View All'),
+                    label: const Icon(Icons.arrow_forward_ios_rounded, size: 14),
+                  ),
+                ],
               ),
-              const SizedBox(width: 16),
-              // Event info
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      event.name,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      '${event.club}  •  ${event.date}',
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.grey.shade600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              // Register arrow
-              Icon(Icons.chevron_right, color: Colors.grey.shade400),
+              const SizedBox(height: 14),
+
+              if (_isLoading)
+                ..._buildShimmerCards(2, height: 100)
+              else
+                ...dummyAnnouncements
+                    .take(3)
+                    .map((item) => AnnouncementTile(announcement: item)),
+
+              // Bottom spacing for scroll
+              const SizedBox(height: 40),
             ],
           ),
         ),
       ),
     );
   }
-}
 
-class _AnnouncementTile extends StatelessWidget {
-  final AnnouncementData announcement;
-
-  const _AnnouncementTile({required this.announcement});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 10),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      elevation: 1,
-      child: Padding(
-        padding: const EdgeInsets.all(14),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              announcement.title,
-              style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              '${announcement.postedBy}  •  ${announcement.date}',
-              style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              announcement.description,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
-            ),
-          ],
+  /// Builds the futuristic search bar UI.
+  Widget _buildSearchBar(ThemeData theme) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: theme.colorScheme.primary.withAlpha(12),
+            blurRadius: 20,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: TextField(
+        controller: _searchController,
+        onChanged: (value) => setState(() => _searchQuery = value),
+        decoration: InputDecoration(
+          hintText: 'Search events, clubs...',
+          hintStyle: theme.textTheme.bodyMedium?.copyWith(
+            color: theme.colorScheme.onSurface.withAlpha(100),
+          ),
+          prefixIcon: Icon(
+            Icons.search_rounded,
+            color: theme.colorScheme.primary,
+          ),
+          suffixIcon: _searchQuery.isNotEmpty
+              ? IconButton(
+                  icon: Icon(
+                    Icons.close_rounded,
+                    color: theme.colorScheme.onSurface.withAlpha(120),
+                  ),
+                  onPressed: () {
+                    _searchController.clear();
+                    setState(() => _searchQuery = '');
+                  },
+                )
+              : null,
         ),
       ),
     );
+  }
+
+  /// Builds a section header with icon and title.
+  Widget _buildSectionHeader(
+    ThemeData theme, {
+    required String title,
+    required IconData icon,
+  }) {
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(6),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.primary.withAlpha(20),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(icon, size: 18, color: theme.colorScheme.primary),
+        ),
+        const SizedBox(width: 10),
+        Text(title, style: theme.textTheme.titleLarge),
+      ],
+    );
+  }
+
+  /// Builds shimmer placeholder cards for loading state.
+  List<Widget> _buildShimmerCards(int count, {double height = 160}) {
+    return List.generate(count, (i) {
+      return TweenAnimationBuilder<double>(
+        tween: Tween(begin: 0.3, end: 0.8),
+        duration: Duration(milliseconds: 1000 + (i * 200)),
+        curve: Curves.easeInOut,
+        builder: (context, value, child) {
+          return AnimatedOpacity(
+            opacity: value,
+            duration: const Duration(milliseconds: 400),
+            child: Container(
+              width: double.infinity,
+              height: height,
+              margin: const EdgeInsets.only(bottom: 14),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(18),
+                color: Theme.of(context).colorScheme.onSurface.withAlpha(15),
+              ),
+            ),
+          );
+        },
+      );
+    });
   }
 }
