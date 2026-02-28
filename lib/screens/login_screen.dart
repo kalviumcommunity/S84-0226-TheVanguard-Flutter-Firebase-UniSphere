@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/auth_provider.dart';
 
 /// A simulated login screen with email and password fields.
-/// No real authentication — navigates to DashboardScreen on valid input.
+/// Uses AuthProvider for state management — navigates on success.
 /// Uses centralized theming — no repeated style blocks.
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -22,25 +25,26 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  void _handleLogin() {
+  Future<void> _handleLogin() async {
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
 
-    if (email.isEmpty || password.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please fill in all fields.'),
-        ),
-      );
-      return;
-    }
+    final auth = context.read<AuthProvider>();
+    final success = await auth.login(email, password);
 
-    // Navigate to Dashboard and clear the auth stack.
-    Navigator.pushNamedAndRemoveUntil(
-      context,
-      '/dashboard',
-      (route) => false,
-    );
+    if (!mounted) return;
+
+    if (success) {
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        '/dashboard',
+        (route) => false,
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(auth.error ?? 'Login failed.')),
+      );
+    }
   }
 
   @override
@@ -111,9 +115,19 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 28),
 
               // ── Login button ──
-              ElevatedButton(
-                onPressed: _handleLogin,
-                child: const Text('Login'),
+              Consumer<AuthProvider>(
+                builder: (context, auth, _) {
+                  return ElevatedButton(
+                    onPressed: auth.isLoading ? null : _handleLogin,
+                    child: auth.isLoading
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Text('Login'),
+                  );
+                },
               ),
               const SizedBox(height: 18),
 

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/auth_provider.dart';
 
 /// A simulated sign-up screen with name, email, and password fields.
-/// No real authentication — navigates to DashboardScreen on valid input.
+/// Uses AuthProvider for state management — navigates on success.
 /// Uses centralized theming — no repeated style blocks.
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -24,26 +27,27 @@ class _SignupScreenState extends State<SignupScreen> {
     super.dispose();
   }
 
-  void _handleSignup() {
+  Future<void> _handleSignup() async {
     final name = _nameController.text.trim();
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
 
-    if (name.isEmpty || email.isEmpty || password.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please fill in all fields.'),
-        ),
-      );
-      return;
-    }
+    final auth = context.read<AuthProvider>();
+    final success = await auth.signup(name, email, password);
 
-    // Navigate to Dashboard and clear the auth stack.
-    Navigator.pushNamedAndRemoveUntil(
-      context,
-      '/dashboard',
-      (route) => false,
-    );
+    if (!mounted) return;
+
+    if (success) {
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        '/dashboard',
+        (route) => false,
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(auth.error ?? 'Signup failed.')),
+      );
+    }
   }
 
   @override
@@ -125,9 +129,19 @@ class _SignupScreenState extends State<SignupScreen> {
               const SizedBox(height: 28),
 
               // ── Sign Up button ──
-              ElevatedButton(
-                onPressed: _handleSignup,
-                child: const Text('Sign Up'),
+              Consumer<AuthProvider>(
+                builder: (context, auth, _) {
+                  return ElevatedButton(
+                    onPressed: auth.isLoading ? null : _handleSignup,
+                    child: auth.isLoading
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Text('Sign Up'),
+                  );
+                },
               ),
               const SizedBox(height: 18),
 

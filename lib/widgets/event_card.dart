@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../main.dart';
+import '../app/theme.dart';
 import '../screens/dashboard_screen.dart';
 
 /// A reusable, futuristic event card with gradient banner,

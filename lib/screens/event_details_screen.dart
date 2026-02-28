@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../main.dart';
+import '../app/theme.dart';
 import 'dashboard_screen.dart';
 
 /// Displays full details for a single event with hero animation,

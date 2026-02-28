@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../main.dart';
+import '../app/theme.dart';
 
 /// The initial entry point of the app — displays the app name,
 /// tagline, and buttons to navigate to Login or Sign Up.

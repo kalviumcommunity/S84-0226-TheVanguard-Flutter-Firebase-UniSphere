@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../main.dart';
+import '../app/theme.dart';
 import '../widgets/empty_state.dart';
 import 'dashboard_screen.dart';
 
