@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../main.dart';
+import '../models/dashboard_data.dart';
 import '../widgets/announcement_tile.dart';
 import '../widgets/empty_state.dart';
-import 'dashboard_screen.dart';
+import '../widgets/theme_toggle_action.dart';
 
 /// Full-page scrollable list of all announcements with
 /// pull-to-refresh and polished visual hierarchy.
@@ -43,16 +43,7 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
         automaticallyImplyLeading: false,
         title: const Text('Announcements'),
         actions: [
-          // Dark mode toggle
-          IconButton(
-            icon: Icon(
-              UniSphereApp.of(context)?.isDarkMode == true
-                  ? Icons.light_mode_rounded
-                  : Icons.dark_mode_rounded,
-            ),
-            tooltip: 'Toggle theme',
-            onPressed: () => UniSphereApp.of(context)?.toggleTheme(),
-          ),
+          const ThemeToggleAction(),
           const SizedBox(width: 4),
         ],
       ),

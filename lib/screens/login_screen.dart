@@ -1,10 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart' hide AuthProvider;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/auth_provider.dart';
-
-import '../services/auth_service.dart';
+import '../widgets/auth_form_widgets.dart';
 
 /// A simulated login screen with email and password fields.
 /// Uses AuthProvider for state management — navigates on success.
@@ -19,9 +17,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final AuthService _authService = AuthService();
   bool _obscurePassword = true;
-  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -54,7 +50,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final horizontalPadding = screenWidth > 600 ? 80.0 : 24.0;
 
@@ -70,17 +65,9 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // ── Header ──
-              Text(
-                'Welcome Back',
-                textAlign: TextAlign.center,
-                style: theme.textTheme.headlineMedium,
-              ),
-              const SizedBox(height: 6),
-              Text(
-                'Sign in to continue',
-                textAlign: TextAlign.center,
-                style: theme.textTheme.bodyMedium,
+              const AuthFormHeader(
+                title: 'Welcome Back',
+                subtitle: 'Sign in to continue',
               ),
               const SizedBox(height: 36),
 
@@ -96,67 +83,33 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 18),
 
-              // ── Password field ──
-              TextField(
+              AuthPasswordField(
                 controller: _passwordController,
                 obscureText: _obscurePassword,
-                textInputAction: TextInputAction.done,
                 onSubmitted: (_) => _handleLogin(),
-                decoration: InputDecoration(
-                  labelText: 'Password',
-                  prefixIcon: const Icon(Icons.lock_outline),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _obscurePassword
-                          ? Icons.visibility_off
-                          : Icons.visibility,
-                    ),
-                    onPressed: () {
-                      setState(() => _obscurePassword = !_obscurePassword);
-                    },
-                  ),
-                ),
+                onToggleVisibility: () =>
+                    setState(() => _obscurePassword = !_obscurePassword),
               ),
               const SizedBox(height: 28),
 
               // ── Login button ──
               Consumer<AuthProvider>(
                 builder: (context, auth, _) {
-                  return ElevatedButton(
-                    onPressed: auth.isLoading ? null : _handleLogin,
-                    child: auth.isLoading
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Text('Login'),
+                  return AuthLoadingButton(
+                    isLoading: auth.isLoading,
+                    label: 'Login',
+                    onPressed: _handleLogin,
                   );
                 },
               ),
               const SizedBox(height: 18),
 
-              // ── Sign up link ──
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Don't have an account? ",
-                    style: theme.textTheme.bodyMedium,
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pushReplacementNamed(context, '/signup');
-                    },
-                    child: Text(
-                      'Sign Up',
-                      style: TextStyle(
-                        color: theme.colorScheme.primary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ],
+              AuthRedirectRow(
+                prompt: "Don't have an account? ",
+                actionLabel: 'Sign Up',
+                onTap: () {
+                  Navigator.pushReplacementNamed(context, '/signup');
+                },
               ),
             ],
           ),

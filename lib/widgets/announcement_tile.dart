@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../screens/dashboard_screen.dart';
+
+import '../models/dashboard_data.dart';
 
 /// A reusable, polished announcement tile with icon badge,
 /// title, metadata, and description preview.

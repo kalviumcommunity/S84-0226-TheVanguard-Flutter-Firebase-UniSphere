@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+
 import '../app/theme.dart';
-import '../screens/dashboard_screen.dart';
+import '../models/dashboard_data.dart';
 
 /// A reusable, futuristic event card with gradient banner,
 /// date badge, club chip, and registration indicator.

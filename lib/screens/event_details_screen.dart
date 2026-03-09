@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../app/theme.dart';
-import 'dashboard_screen.dart';
+import '../models/dashboard_data.dart';
 
 /// Displays full details for a single event with hero animation,
 /// styled register button with animation, and improved typography.
@@ -374,21 +374,5 @@ class _EventDetailsScreenState extends State<EventDetailsScreen>
         ],
       ),
     );
-  }
-}
-
-/// Uses AnimatedBuilder from Flutter SDK (named to avoid conflict).
-class AnimatedBuilder extends AnimatedWidget {
-  final Widget Function(BuildContext, Widget?) builder;
-
-  const AnimatedBuilder({
-    super.key,
-    required Animation<double> animation,
-    required this.builder,
-  }) : super(listenable: animation);
-
-  @override
-  Widget build(BuildContext context) {
-    return builder(context, null);
   }
 }
