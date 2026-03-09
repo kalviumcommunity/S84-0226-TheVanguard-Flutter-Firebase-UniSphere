@@ -1,7 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart' hide AuthProvider;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/auth_provider.dart';
+
+import '../services/auth_service.dart';
+import '../services/firestore_service.dart';
 
 /// A simulated sign-up screen with name, email, and password fields.
 /// Uses AuthProvider for state management — navigates on success.
@@ -17,7 +22,10 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final AuthService _authService = AuthService();
+  final FirestoreService _firestoreService = FirestoreService();
   bool _obscurePassword = true;
+  bool _isLoading = false;
 
   @override
   void dispose() {

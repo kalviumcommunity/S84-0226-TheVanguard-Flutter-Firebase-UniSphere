@@ -1,5 +1,9 @@
-﻿import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
+
+import 'firebase_options.dart';
 
 import 'app/theme.dart';
 import 'app/router.dart';
@@ -11,7 +15,12 @@ import 'repositories/mock/mock_event_repository.dart';
 import 'repositories/mock/mock_announcement_repository.dart';
 import 'repositories/mock/mock_registration_repository.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: '.env');
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const UniSphereApp());
 }
 

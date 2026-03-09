@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../main.dart';
@@ -240,11 +242,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // ── Search Bar ──────────────────────────────────
-              _buildSearchBar(theme),
+              buildSearchBar(theme),
               const SizedBox(height: 24),
 
               // ── Upcoming Events section ─────────────────────
-              _buildSectionHeader(
+              buildSectionHeader(
                 theme,
                 title: 'Upcoming Events',
                 icon: Icons.event_rounded,
@@ -253,7 +255,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
               // Event list or empty/loading state
               if (_isLoading)
-                ..._buildShimmerCards(3)
+                ...buildShimmerCards(3)
               else if (filteredEvents.isEmpty)
                 const EmptyState(
                   icon: Icons.search_off_rounded,
@@ -280,7 +282,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _buildSectionHeader(
+                  buildSectionHeader(
                     theme,
                     title: 'Announcements',
                     icon: Icons.campaign_rounded,
@@ -297,7 +299,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               const SizedBox(height: 14),
 
               if (_isLoading)
-                ..._buildShimmerCards(2, height: 100)
+                ...buildShimmerCards(2, height: 100)
               else
                 ...dummyAnnouncements
                     .take(3)
@@ -313,7 +315,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   /// Builds the futuristic search bar UI.
-  Widget _buildSearchBar(ThemeData theme) {
+  Widget buildSearchBar(ThemeData theme) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
@@ -355,7 +357,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   /// Builds a section header with icon and title.
-  Widget _buildSectionHeader(
+  Widget buildSectionHeader(
     ThemeData theme, {
     required String title,
     required IconData icon,
@@ -377,7 +379,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   /// Builds shimmer placeholder cards for loading state.
-  List<Widget> _buildShimmerCards(int count, {double height = 160}) {
+  List<Widget> buildShimmerCards(int count, {double height = 160}) {
     return List.generate(count, (i) {
       return TweenAnimationBuilder<double>(
         tween: Tween(begin: 0.3, end: 0.8),

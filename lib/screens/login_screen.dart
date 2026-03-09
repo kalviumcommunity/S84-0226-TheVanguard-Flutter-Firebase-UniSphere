@@ -1,7 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart' hide AuthProvider;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/auth_provider.dart';
+
+import '../services/auth_service.dart';
 
 /// A simulated login screen with email and password fields.
 /// Uses AuthProvider for state management — navigates on success.
@@ -16,7 +19,9 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final AuthService _authService = AuthService();
   bool _obscurePassword = true;
+  bool _isLoading = false;
 
   @override
   void dispose() {
