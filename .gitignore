@@ -1,4 +1,5 @@
 # Miscellaneous
+
 *.class
 *.log
 *.pyc
@@ -13,16 +14,19 @@
 migrate_working_dir/
 
 # IntelliJ related
+
 *.iml
 *.ipr
 *.iws
 .idea/
 
 # VS Code related
+
 .vscode/
 *.code-workspace
 
 # Flutter/Dart/Pub related
+
 **/doc/api/
 **/ios/Flutter/.last_build_id
 .dart_tool/
@@ -33,22 +37,27 @@ migrate_working_dir/
 /coverage/
 
 # Symbolication related
+
 app.*.symbols
 
 # Obfuscation related
+
 app.*.map.json
 
-# Environment variables - contains secrets, do not commit
+# Environment variables (contains secrets)
+
 .env
 .env.local
 .env.*.local
 
-# Android Studio will place build artifacts here
+# Android Studio build artifacts
+
 /android/app/debug
 /android/app/profile
 /android/app/release
 
 # Additional IDE files
+
 *.sublime-project
 *.sublime-workspace
 .project
@@ -56,6 +65,7 @@ app.*.map.json
 .classpath
 
 # OS generated files
+
 Thumbs.db
 ehthumbs.db
 Desktop.ini
@@ -68,6 +78,7 @@ $RECYCLE.BIN/
 *.lnk
 
 # Temporary files
+
 *.tmp
 *.temp
 *.swp
@@ -75,25 +86,30 @@ $RECYCLE.BIN/
 *~
 
 # Firebase
+
 firebase-debug.log
 firebase-debug.*.log
 .firebase/
 
 # Test coverage
+
 coverage/
 test/coverage/
 
-# Generated files
+# Generated Dart files
+
 *.g.dart
 *.freezed.dart
 *.mocks.dart
 
-# Dependencies
+# Node dependencies (if using web tooling)
+
 node_modules/
 .pnp/
 .pnp.js
 
 # Build outputs
+
 web/build/
 android/app/build/
 ios/build/
