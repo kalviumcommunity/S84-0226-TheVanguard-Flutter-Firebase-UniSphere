@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../screens/splash_screen.dart';
 import '../screens/landing_screen.dart';
 import '../screens/login_screen.dart';
 import '../screens/signup_screen.dart';
@@ -16,7 +17,8 @@ class AppRouter {
   AppRouter._();
 
   // ── Route names ────────────────────────────────────────────────
-  static const String landing = '/';
+  static const String splash = '/';
+  static const String landing = '/landing';
   static const String login = '/login';
   static const String signup = '/signup';
   static const String dashboard = '/dashboard';
@@ -31,6 +33,9 @@ class AppRouter {
     Widget page;
 
     switch (settings.name) {
+      case splash:
+        page = const SplashScreen();
+        break;
       case landing:
         page = const LandingScreen();
         break;
