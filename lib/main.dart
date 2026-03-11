@@ -11,9 +11,7 @@ import 'providers/auth_provider.dart';
 import 'providers/event_provider.dart';
 import 'providers/registration_provider.dart';
 import 'providers/announcement_provider.dart';
-import 'repositories/mock/mock_event_repository.dart';
-import 'repositories/mock/mock_announcement_repository.dart';
-import 'repositories/mock/mock_registration_repository.dart';
+import 'repositories/firebase/firebase_repositories.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -52,24 +50,31 @@ class UniSphereAppState extends State<UniSphereApp> {
 
   @override
   Widget build(BuildContext context) {
+    // Create Firebase repositories
+    final eventRepository = FirebaseEventRepository();
+    final registrationRepository = FirebaseRegistrationRepository(
+      eventRepository: eventRepository,
+    );
+    final announcementRepository = FirebaseAnnouncementRepository();
+
     return MultiProvider(
       providers: [
         // Auth state
         ChangeNotifierProvider(create: (_) => AuthProvider()),
 
-        // Event state (backed by mock repository)
+        // Event state (backed by Firebase)
         ChangeNotifierProvider(
-          create: (_) => EventProvider(MockEventRepository()),
+          create: (_) => EventProvider(eventRepository),
         ),
 
-        // Registration state (backed by mock repository)
+        // Registration state (backed by Firebase)
         ChangeNotifierProvider(
-          create: (_) => RegistrationProvider(MockRegistrationRepository()),
+          create: (_) => RegistrationProvider(registrationRepository),
         ),
 
-        // Announcement state (backed by mock repository)
+        // Announcement state (backed by Firebase)
         ChangeNotifierProvider(
-          create: (_) => AnnouncementProvider(MockAnnouncementRepository()),
+          create: (_) => AnnouncementProvider(announcementRepository),
         ),
       ],
       child: MaterialApp(
