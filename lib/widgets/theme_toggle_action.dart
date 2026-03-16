@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../main.dart';
+import 'package:unisphere/main.dart';
 
 /// Reusable AppBar action for toggling light/dark mode.
 class ThemeToggleAction extends StatelessWidget {

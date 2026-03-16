@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../../models/announcement_model.dart';
-import '../announcement_repository.dart';
+import 'package:unisphere/models/announcement_model.dart';
+import 'package:unisphere/repositories/announcement_repository.dart';
 
 /// Firebase Firestore implementation of [AnnouncementRepository].
 ///

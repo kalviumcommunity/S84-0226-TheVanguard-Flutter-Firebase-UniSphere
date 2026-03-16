@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../providers/auth_provider.dart';
-import '../widgets/auth_form_widgets.dart';
+import 'package:unisphere/providers/auth_provider.dart';
+import 'package:unisphere/widgets/auth_form_widgets.dart';
 
 /// A simulated sign-up screen with name, email, and password fields.
 /// Uses AuthProvider for state management — navigates on success.

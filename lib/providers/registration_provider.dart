@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
-import '../models/registration_model.dart';
-import '../repositories/registration_repository.dart';
+import 'package:unisphere/models/registration_model.dart';
+import 'package:unisphere/repositories/registration_repository.dart';
 
 /// Centralized registration state shared across ALL screens.
 ///

@@ -16,8 +16,7 @@ class AnnouncementModel {
     required this.title,
     required this.description,
     required this.postedBy,
-    this.clubId = '',
-    required this.date,
+    required this.date, this.clubId = '',
     this.priority = AnnouncementPriority.normal,
     this.scope = AnnouncementScope.campusWide,
   });

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../models/dashboard_data.dart';
+import 'package:unisphere/models/dashboard_data.dart';
 
 /// A reusable, polished announcement tile with icon badge,
 /// title, metadata, and description preview.
@@ -11,8 +11,7 @@ class AnnouncementTile extends StatelessWidget {
   final bool showFullDescription;
 
   const AnnouncementTile({
-    super.key,
-    required this.announcement,
+    required this.announcement, super.key,
     this.showFullDescription = false,
   });
 

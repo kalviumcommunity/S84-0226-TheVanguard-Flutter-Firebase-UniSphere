@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../../models/attendance_model.dart';
-import '../attendance_repository.dart';
+import 'package:unisphere/models/attendance_model.dart';
+import 'package:unisphere/repositories/attendance_repository.dart';
 
 /// Firebase Firestore implementation of [AttendanceRepository].
 ///

@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
-import '../models/event_model.dart';
-import '../repositories/event_repository.dart';
+import 'package:unisphere/models/event_model.dart';
+import 'package:unisphere/repositories/event_repository.dart';
 
 /// Provides centralized event state for all screens.
 ///

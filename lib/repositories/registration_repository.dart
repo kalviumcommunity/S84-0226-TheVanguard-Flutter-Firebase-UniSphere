@@ -1,4 +1,4 @@
-import '../models/registration_model.dart';
+import 'package:unisphere/models/registration_model.dart';
 
 /// Abstract contract for registration data operations.
 abstract class RegistrationRepository {

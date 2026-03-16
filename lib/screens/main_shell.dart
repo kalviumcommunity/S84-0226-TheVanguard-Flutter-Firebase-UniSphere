@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../app/theme.dart';
-import 'student_home_screen.dart';
-import 'schedule_screen.dart';
-import 'dashboard_screen.dart';
-import 'campus_services_screen.dart';
-import 'profile_screen.dart';
+import 'package:unisphere/app/theme.dart';
+import 'package:unisphere/screens/student_home_screen.dart';
+import 'package:unisphere/screens/schedule_screen.dart';
+import 'package:unisphere/screens/dashboard_screen.dart';
+import 'package:unisphere/screens/campus_services_screen.dart';
+import 'package:unisphere/screens/profile_screen.dart';
 
 /// The main shell screen with a modern bottom navigation bar.
 /// Wraps all main screens: Home, Schedule, Events, Services, Profile.

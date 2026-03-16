@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../models/dashboard_data.dart';
-import '../widgets/event_card.dart';
-import '../widgets/announcement_tile.dart';
-import '../widgets/empty_state.dart';
-import '../widgets/theme_toggle_action.dart';
+import 'package:unisphere/models/dashboard_data.dart';
+import 'package:unisphere/widgets/event_card.dart';
+import 'package:unisphere/widgets/announcement_tile.dart';
+import 'package:unisphere/widgets/empty_state.dart';
+import 'package:unisphere/widgets/theme_toggle_action.dart';
 
 // ═════════════════════════════════════════════════════════════════
 //  DASHBOARD SCREEN — upgraded with search, filters, polish
@@ -69,9 +69,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: const Text('UniSphere'),
-        actions: [
-          const ThemeToggleAction(),
-          const SizedBox(width: 4),
+        actions: const [
+          ThemeToggleAction(),
+          SizedBox(width: 4),
         ],
       ),
       body: RefreshIndicator(

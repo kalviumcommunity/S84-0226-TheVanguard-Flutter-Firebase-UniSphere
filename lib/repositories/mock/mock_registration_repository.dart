@@ -1,5 +1,5 @@
-import '../../models/registration_model.dart';
-import '../registration_repository.dart';
+import 'package:unisphere/models/registration_model.dart';
+import 'package:unisphere/repositories/registration_repository.dart';
 
 /// Mock implementation of [RegistrationRepository] using in-memory data.
 class MockRegistrationRepository implements RegistrationRepository {

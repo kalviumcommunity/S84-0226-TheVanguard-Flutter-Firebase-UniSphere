@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../../models/event_model.dart';
-import '../event_repository.dart';
+import 'package:unisphere/models/event_model.dart';
+import 'package:unisphere/repositories/event_repository.dart';
 
 /// Firebase Firestore implementation of [EventRepository].
 ///

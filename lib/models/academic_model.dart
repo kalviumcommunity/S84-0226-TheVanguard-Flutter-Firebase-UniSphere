@@ -1,4 +1,5 @@
 /// Academic data models for college student features.
+library;
 
 /// Represents a course/class in a semester.
 class CourseModel {
@@ -18,10 +19,8 @@ class CourseModel {
     required this.name,
     required this.instructor,
     required this.credits,
-    this.grade,
+    required this.room, required this.building, this.grade,
     this.gradePoints,
-    required this.room,
-    required this.building,
   });
 
   CourseModel copyWith({
@@ -129,9 +128,7 @@ class AssignmentModel {
     required this.courseId,
     required this.courseName,
     required this.title,
-    this.description,
-    required this.dueDate,
-    required this.type,
+    required this.dueDate, required this.type, this.description,
     this.isCompleted = false,
     this.score,
     this.maxScore,
@@ -184,8 +181,7 @@ class SemesterModel {
     required this.startDate,
     required this.endDate,
     required this.courses,
-    this.gpa,
-    required this.totalCredits,
+    required this.totalCredits, this.gpa,
   });
 
   bool get isCurrent {

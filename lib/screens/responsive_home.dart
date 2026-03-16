@@ -33,9 +33,9 @@ class _ResponsiveHomeState extends State<ResponsiveHome> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    bool isTablet = screenWidth > 600;
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final bool isTablet = screenWidth > 600;
 
     return Scaffold(
       appBar: buildHeader(),
@@ -68,8 +68,8 @@ class _ResponsiveHomeState extends State<ResponsiveHome> {
     required double screenHeight,
     required bool isTablet,
   }) {
-    double padding = isTablet ? 24.0 : 12.0;
-    double fontSize = isTablet ? 22.0 : 16.0;
+    final double padding = isTablet ? 24.0 : 12.0;
+    final double fontSize = isTablet ? 22.0 : 16.0;
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -199,8 +199,8 @@ class _ResponsiveHomeState extends State<ResponsiveHome> {
   }
 
   Widget buildFooter({required bool isTablet}) {
-    double horizontalPadding = isTablet ? 32.0 : 16.0;
-    double fontSize = isTablet ? 20.0 : 16.0;
+    final double horizontalPadding = isTablet ? 32.0 : 16.0;
+    final double fontSize = isTablet ? 20.0 : 16.0;
 
     return Padding(
       padding: EdgeInsets.fromLTRB(

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import '../app/theme.dart';
-import '../main.dart';
+import 'package:unisphere/app/theme.dart';
+import 'package:unisphere/main.dart';
+import 'package:unisphere/providers/auth_provider.dart';
 
 /// Student profile screen with academic info and account settings.
 class ProfileScreen extends StatelessWidget {
@@ -78,7 +80,7 @@ class ProfileScreen extends StatelessWidget {
                       width: 3,
                     ),
                   ),
-                  child: CircleAvatar(
+                  child: const CircleAvatar(
                     radius: 50,
                     backgroundColor: Colors.white,
                     child: Text(
@@ -560,7 +562,10 @@ class ProfileScreen extends StatelessWidget {
                     child: const Text('Cancel'),
                   ),
                   ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
+                      final auth = context.read<AuthProvider>();
+                      await auth.logout();
+                      if (!context.mounted) return;
                       Navigator.pop(context);
                       Navigator.pushNamedAndRemoveUntil(
                         context,

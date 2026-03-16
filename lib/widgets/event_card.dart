@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../app/theme.dart';
-import '../models/dashboard_data.dart';
+import 'package:unisphere/app/theme.dart';
+import 'package:unisphere/models/dashboard_data.dart';
 
 /// A reusable, futuristic event card with gradient banner,
 /// date badge, club chip, and registration indicator.
@@ -14,9 +14,7 @@ class EventCard extends StatelessWidget {
   final bool isRegistered;
 
   const EventCard({
-    super.key,
-    required this.event,
-    required this.onTap,
+    required this.event, required this.onTap, super.key,
     this.index = 0,
     this.isRegistered = false,
   });

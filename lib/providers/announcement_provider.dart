@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
-import '../models/announcement_model.dart';
-import '../repositories/announcement_repository.dart';
+import 'package:unisphere/models/announcement_model.dart';
+import 'package:unisphere/repositories/announcement_repository.dart';
 
 /// Provides centralized announcement state for all screens.
 ///

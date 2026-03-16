@@ -1,4 +1,5 @@
 /// Campus service models for student utilities.
+library;
 import 'package:flutter/material.dart';
 
 /// Represents a campus service/facility.
@@ -19,12 +20,10 @@ class CampusService {
     required this.name,
     required this.description,
     required this.icon,
-    this.location,
+    required this.category, required this.gradientColors, this.location,
     this.hours,
     this.phone,
     this.email,
-    required this.category,
-    required this.gradientColors,
   });
 }
 
@@ -121,10 +120,9 @@ class MenuItem {
     required this.description,
     required this.price,
     required this.category,
-    this.isVegetarian = false,
+    required this.calories, this.isVegetarian = false,
     this.isVegan = false,
     this.imageUrl,
-    required this.calories,
   });
 }
 
@@ -160,8 +158,7 @@ class EmergencyContact {
     required this.id,
     required this.name,
     required this.phone,
-    this.description,
-    required this.icon,
+    required this.icon, this.description,
     this.isPrimary = false,
   });
 }

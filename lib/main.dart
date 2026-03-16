@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 
-import 'firebase_options.dart';
+import 'package:unisphere/firebase_options.dart';
 
-import 'app/theme.dart';
-import 'app/router.dart';
-import 'providers/auth_provider.dart';
-import 'providers/event_provider.dart';
-import 'providers/registration_provider.dart';
-import 'providers/announcement_provider.dart';
-import 'repositories/firebase/firebase_repositories.dart';
+import 'package:unisphere/app/theme.dart';
+import 'package:unisphere/app/router.dart';
+import 'package:unisphere/providers/auth_provider.dart';
+import 'package:unisphere/providers/event_provider.dart';
+import 'package:unisphere/providers/registration_provider.dart';
+import 'package:unisphere/providers/announcement_provider.dart';
+import 'package:unisphere/repositories/firebase/firebase_repositories.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

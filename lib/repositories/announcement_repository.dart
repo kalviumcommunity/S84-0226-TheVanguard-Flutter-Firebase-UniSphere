@@ -1,4 +1,4 @@
-import '../models/announcement_model.dart';
+import 'package:unisphere/models/announcement_model.dart';
 
 /// Abstract contract for announcement data operations.
 abstract class AnnouncementRepository {

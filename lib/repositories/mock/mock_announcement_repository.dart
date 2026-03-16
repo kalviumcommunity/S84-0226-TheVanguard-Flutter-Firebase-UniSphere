@@ -1,5 +1,5 @@
-import '../../models/announcement_model.dart';
-import '../announcement_repository.dart';
+import 'package:unisphere/models/announcement_model.dart';
+import 'package:unisphere/repositories/announcement_repository.dart';
 
 /// Mock implementation of [AnnouncementRepository] using in-memory data.
 class MockAnnouncementRepository implements AnnouncementRepository {

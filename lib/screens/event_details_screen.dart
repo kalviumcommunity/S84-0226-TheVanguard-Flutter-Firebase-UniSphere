@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../app/theme.dart';
-import '../models/dashboard_data.dart';
+import 'package:unisphere/app/theme.dart';
+import 'package:unisphere/models/dashboard_data.dart';
 
 /// Displays full details for a single event with hero animation,
 /// styled register button with animation, and improved typography.

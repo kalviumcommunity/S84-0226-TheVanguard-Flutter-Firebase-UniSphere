@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../app/theme.dart';
+import 'package:unisphere/app/theme.dart';
 
 /// Modern landing screen with feature highlights and auth options.
 class LandingScreen extends StatefulWidget {

@@ -7,21 +7,22 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 ///   • Notes collection per user (create / read stream / update / delete)
 class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
+  static const String _userCollection = 'test_users';
 
   // ─────────────────────────────────────────────────────────────────────────
   // User profile
   // ─────────────────────────────────────────────────────────────────────────
 
-  /// Creates or overwrites a user document at `users/{uid}`.
+  /// Creates or overwrites a user document at `test_users/{uid}`.
   ///
   /// Typical [data] map: `{'name': '...', 'email': '...', 'createdAt': ...}`
   Future<void> addUserData(String uid, Map<String, dynamic> data) async {
-    await _db.collection('users').doc(uid).set(data);
+    await _db.collection(_userCollection).doc(uid).set(data);
   }
 
   /// Returns a user document snapshot for [uid], or null if it doesn't exist.
   Future<Map<String, dynamic>?> getUserData(String uid) async {
-    final doc = await _db.collection('users').doc(uid).get();
+    final doc = await _db.collection(_userCollection).doc(uid).get();
     return doc.exists ? doc.data() : null;
   }
 

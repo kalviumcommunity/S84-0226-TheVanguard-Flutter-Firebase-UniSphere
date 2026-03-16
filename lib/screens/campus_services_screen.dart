@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../app/theme.dart';
-import '../widgets/theme_toggle_action.dart';
+import 'package:unisphere/app/theme.dart';
+import 'package:unisphere/widgets/theme_toggle_action.dart';
 
 /// Campus services screen with all student utilities and facilities.
 class CampusServicesScreen extends StatefulWidget {

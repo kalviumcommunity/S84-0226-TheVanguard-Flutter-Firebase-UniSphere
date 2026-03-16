@@ -1,6 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../app/theme.dart';
+import 'package:unisphere/app/theme.dart';
 
 /// Animated splash screen displayed at app launch.
 /// Shows the UniSphere branding with smooth animations
@@ -114,7 +115,9 @@ class _SplashScreenState extends State<SplashScreen>
     if (mounted) {
       _fadeOutController.forward().then((_) {
         if (mounted) {
-          Navigator.pushReplacementNamed(context, '/landing');
+          final isSignedIn = FirebaseAuth.instance.currentUser != null;
+          final nextRoute = isSignedIn ? '/dashboard' : '/landing';
+          Navigator.pushReplacementNamed(context, nextRoute);
         }
       });
     }
