@@ -1,5 +1,5 @@
-import '../../models/event_model.dart';
-import '../event_repository.dart';
+import 'package:unisphere/models/event_model.dart';
+import 'package:unisphere/repositories/event_repository.dart';
 
 /// Mock implementation of [EventRepository] using in-memory data.
 ///

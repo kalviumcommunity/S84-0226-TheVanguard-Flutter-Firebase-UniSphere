@@ -1,126 +1,228 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
-import '../models/user_model.dart';
+import 'package:unisphere/models/user_model.dart';
+import 'package:unisphere/services/auth_service.dart';
+import 'package:unisphere/services/firestore_service.dart';
 
 /// Manages authentication state across the entire app.
 ///
-/// Exposes the current user, login/logout actions, and
-/// role-based access control helpers.
-///
-/// Currently uses mock auth (any non-empty credentials succeed).
-/// Replace the login/signup bodies with Firebase Auth calls when ready.
+/// Backed by Firebase Authentication + Cloud Firestore.
+/// Auth session persistence is handled by Firebase and restored automatically.
 class AuthProvider extends ChangeNotifier {
-  UserModel? _currentUser;
-  bool _isLoading = false;
-  String? _error;
+  AuthProvider({
+    AuthService? authService,
+    FirestoreService? firestoreService,
+  })  : _authService = authService ?? AuthService(),
+        _firestoreService = firestoreService ?? FirestoreService() {
+    _authSubscription = _authService.authStateChanges.listen(_onAuthStateChanged);
 
-  // ── Getters ──────────────────────────────────────────────────
+    final initialUser = _authService.currentUser;
+    if (initialUser == null) {
+      _isLoading = false;
+    } else {
+      _onAuthStateChanged(initialUser);
+    }
+  }
+
+  final AuthService _authService;
+  final FirestoreService _firestoreService;
+  StreamSubscription<User?>? _authSubscription;
+
+  UserModel? _currentUser;
+  bool _isLoading = true;
+  String? _error;
 
   UserModel? get currentUser => _currentUser;
   bool get isAuthenticated => _currentUser != null;
   bool get isLoading => _isLoading;
   String? get error => _error;
   bool get isAdmin => _currentUser?.isAdmin ?? false;
-  String get userId => _currentUser?.uid ?? 'mock_user';
+  String get userId => _currentUser?.uid ?? 'guest_user';
 
-  // ── Actions ──────────────────────────────────────────────────
-
-  /// Simulates login. Accepts any non-empty email/password.
-  /// Creates a mock student user by default.
   Future<bool> login(String email, String password) async {
+    if (email.isEmpty || password.isEmpty) {
+      _error = 'Please fill in all fields.';
+      notifyListeners();
+      return false;
+    }
+
     _isLoading = true;
     _error = null;
     notifyListeners();
 
     try {
-      // Simulate network delay
-      await Future.delayed(const Duration(milliseconds: 500));
+      final user = await _authService.signIn(
+        email: email,
+        password: password,
+      );
 
-      if (email.isEmpty || password.isEmpty) {
-        _error = 'Please fill in all fields.';
+      if (user == null) {
+        _error = 'Login failed. Please try again.';
         _isLoading = false;
         notifyListeners();
         return false;
       }
 
-      // Mock: admin users get admin role based on email pattern
-      final role =
-          email.contains('admin') ? UserRole.clubAdmin : UserRole.student;
-
-      _currentUser = UserModel(
-        uid: 'mock_user',
-        name: _nameFromEmail(email),
-        email: email,
-        role: role,
-        clubIds: role == UserRole.clubAdmin ? ['club_dsc'] : [],
-      );
-
+      await _syncUserProfile(user);
       _isLoading = false;
       notifyListeners();
       return true;
-    } catch (e) {
-      _error = 'Login failed: $e';
+    } on FirebaseAuthException catch (e) {
+      _error = AuthService.friendlyError(e);
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    } catch (_) {
+      _error = 'Login failed. Please try again.';
       _isLoading = false;
       notifyListeners();
       return false;
     }
   }
 
-  /// Simulates signup.
   Future<bool> signup(String name, String email, String password) async {
+    if (name.isEmpty || email.isEmpty || password.isEmpty) {
+      _error = 'Please fill in all fields.';
+      notifyListeners();
+      return false;
+    }
+
     _isLoading = true;
     _error = null;
     notifyListeners();
 
     try {
-      await Future.delayed(const Duration(milliseconds: 500));
+      final user = await _authService.signUp(
+        email: email,
+        password: password,
+      );
 
-      if (name.isEmpty || email.isEmpty || password.isEmpty) {
-        _error = 'Please fill in all fields.';
+      if (user == null) {
+        _error = 'Signup failed. Please try again.';
         _isLoading = false;
         notifyListeners();
         return false;
       }
 
-      _currentUser = UserModel(
-        uid: 'mock_user',
-        name: name,
-        email: email,
-        role: UserRole.student,
-      );
+      await user.updateDisplayName(name.trim());
+      await _syncUserProfile(user, preferredName: name.trim());
 
       _isLoading = false;
       notifyListeners();
       return true;
-    } catch (e) {
-      _error = 'Signup failed: $e';
+    } on FirebaseAuthException catch (e) {
+      _error = AuthService.friendlyError(e);
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    } catch (_) {
+      _error = 'Signup failed. Please try again.';
       _isLoading = false;
       notifyListeners();
       return false;
     }
   }
 
-  /// Logs out and clears user state.
-  void logout() {
-    _currentUser = null;
-    _error = null;
+  Future<void> logout() async {
+    _isLoading = true;
     notifyListeners();
+
+    try {
+      await _authService.signOut();
+      _currentUser = null;
+      _error = null;
+    } catch (_) {
+      _error = 'Logout failed. Please try again.';
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
-  /// Clears any pending error.
   void clearError() {
     _error = null;
     notifyListeners();
   }
 
-  /// Derives a display name from an email address.
+  Future<void> _onAuthStateChanged(User? firebaseUser) async {
+    if (firebaseUser == null) {
+      _currentUser = null;
+      _error = null;
+      _isLoading = false;
+      notifyListeners();
+      return;
+    }
+
+    _isLoading = true;
+    notifyListeners();
+
+    await _syncUserProfile(firebaseUser);
+
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> _syncUserProfile(
+    User firebaseUser, {
+    String? preferredName,
+  }) async {
+    final existing = await _firestoreService.getUserData(firebaseUser.uid);
+
+    if (existing != null) {
+      _currentUser = UserModel.fromMap(existing, docId: firebaseUser.uid);
+      return;
+    }
+
+    final role = firebaseUser.email?.contains('admin') ?? false
+        ? UserRole.clubAdmin
+        : UserRole.student;
+
+    final displayName = firebaseUser.displayName?.trim() ?? '';
+    final resolvedName = preferredName?.trim().isNotEmpty == true
+        ? preferredName!.trim()
+        : displayName.isNotEmpty
+            ? displayName
+            : _nameFromEmail(firebaseUser.email ?? '');
+
+    final user = UserModel(
+      uid: firebaseUser.uid,
+      name: resolvedName,
+      email: firebaseUser.email ?? '',
+      role: role,
+      clubIds: role == UserRole.clubAdmin ? ['club_dsc'] : const [],
+    );
+
+    await _firestoreService.addUserData(
+      firebaseUser.uid,
+      {
+        ...user.toMap(),
+        'createdAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
+      },
+    );
+
+    _currentUser = user;
+  }
+
   String _nameFromEmail(String email) {
+    if (email.isEmpty) return 'Student';
     final localPart = email.split('@').first;
     return localPart
         .split(RegExp(r'[._]'))
-        .map((w) => w.isNotEmpty
-            ? '${w[0].toUpperCase()}${w.substring(1)}'
+        .map((word) => word.isNotEmpty
+            ? '${word[0].toUpperCase()}${word.substring(1)}'
             : '')
-        .join(' ');
+        .join(' ')
+        .trim();
+  }
+
+  @override
+  void dispose() {
+    _authSubscription?.cancel();
+    super.dispose();
   }
 }

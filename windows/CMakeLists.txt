@@ -10,6 +10,11 @@ set(BINARY_NAME "unisphere")
 # versions of CMake.
 cmake_policy(VERSION 3.14...3.25)
 
+# Silence deprecation/developer warnings emitted by third-party plugin CMake
+# files (for example Firebase's bundled C++ SDK scripts).
+set(CMAKE_WARN_DEPRECATED OFF CACHE BOOL "" FORCE)
+set(CMAKE_SUPPRESS_DEVELOPER_WARNINGS 1 CACHE BOOL "" FORCE)
+
 # Define build configuration option.
 get_property(IS_MULTICONFIG GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
 if(IS_MULTICONFIG)

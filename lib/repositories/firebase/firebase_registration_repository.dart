@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../../models/registration_model.dart';
-import '../registration_repository.dart';
-import 'firebase_event_repository.dart';
+import 'package:unisphere/models/registration_model.dart';
+import 'package:unisphere/repositories/registration_repository.dart';
+import 'package:unisphere/repositories/firebase/firebase_event_repository.dart';
 
 /// Firebase Firestore implementation of [RegistrationRepository].
 ///

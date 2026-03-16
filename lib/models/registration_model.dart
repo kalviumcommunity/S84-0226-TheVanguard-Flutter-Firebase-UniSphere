@@ -11,8 +11,7 @@ class RegistrationModel {
     required this.id,
     required this.userId,
     required this.eventId,
-    this.status = RegistrationStatus.registered,
-    required this.registeredAt,
+    required this.registeredAt, this.status = RegistrationStatus.registered,
     this.cancelledAt,
   });
 

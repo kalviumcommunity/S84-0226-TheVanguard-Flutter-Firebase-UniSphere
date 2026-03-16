@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../constants/app_constants.dart';
+import 'package:unisphere/core/constants/app_constants.dart';
 
 class AppTheme {
   AppTheme._();

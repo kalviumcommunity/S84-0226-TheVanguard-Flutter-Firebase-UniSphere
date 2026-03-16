@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../app/theme.dart';
-import '../models/dashboard_data.dart';
-import '../widgets/empty_state.dart';
-import '../widgets/theme_toggle_action.dart';
+import 'package:unisphere/app/theme.dart';
+import 'package:unisphere/models/dashboard_data.dart';
+import 'package:unisphere/widgets/empty_state.dart';
+import 'package:unisphere/widgets/theme_toggle_action.dart';
 
 /// Shows a list of all events with their registration status.
 ///
@@ -48,9 +48,9 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: const Text('Attendance'),
-        actions: [
-          const ThemeToggleAction(),
-          const SizedBox(width: 4),
+        actions: const [
+          ThemeToggleAction(),
+          SizedBox(width: 4),
         ],
       ),
       body: Column(

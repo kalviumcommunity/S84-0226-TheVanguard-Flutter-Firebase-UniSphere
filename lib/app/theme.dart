@@ -139,19 +139,19 @@ class UniSphereTheme {
       ),
 
       // ── Bottom Navigation ──
-      bottomNavigationBarTheme: BottomNavigationBarThemeData(
+      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: Colors.white,
         selectedItemColor: primaryColor,
-        unselectedItemColor: const Color(0xFF9CA3AF),
+        unselectedItemColor: Color(0xFF9CA3AF),
         type: BottomNavigationBarType.fixed,
         elevation: 12,
-        selectedIconTheme: const IconThemeData(size: 26),
-        unselectedIconTheme: const IconThemeData(size: 24),
-        selectedLabelStyle: const TextStyle(
+        selectedIconTheme: IconThemeData(size: 26),
+        unselectedIconTheme: IconThemeData(size: 24),
+        selectedLabelStyle: TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.w700,
         ),
-        unselectedLabelStyle: const TextStyle(
+        unselectedLabelStyle: TextStyle(
           fontSize: 11,
           fontWeight: FontWeight.w500,
         ),
@@ -339,19 +339,19 @@ class UniSphereTheme {
       ),
 
       // ── Bottom Navigation ──
-      bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        backgroundColor: const Color(0xFF161B22),
+      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+        backgroundColor: Color(0xFF161B22),
         selectedItemColor: primaryLight,
-        unselectedItemColor: const Color(0xFF6B7280),
+        unselectedItemColor: Color(0xFF6B7280),
         type: BottomNavigationBarType.fixed,
         elevation: 12,
-        selectedIconTheme: const IconThemeData(size: 26),
-        unselectedIconTheme: const IconThemeData(size: 24),
-        selectedLabelStyle: const TextStyle(
+        selectedIconTheme: IconThemeData(size: 26),
+        unselectedIconTheme: IconThemeData(size: 24),
+        selectedLabelStyle: TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.w700,
         ),
-        unselectedLabelStyle: const TextStyle(
+        unselectedLabelStyle: TextStyle(
           fontSize: 11,
           fontWeight: FontWeight.w500,
         ),

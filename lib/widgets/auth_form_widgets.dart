@@ -6,9 +6,7 @@ class AuthFormHeader extends StatelessWidget {
   final String subtitle;
 
   const AuthFormHeader({
-    super.key,
-    required this.title,
-    required this.subtitle,
+    required this.title, required this.subtitle, super.key,
   });
 
   @override
@@ -41,10 +39,7 @@ class AuthPasswordField extends StatelessWidget {
   final ValueChanged<String>? onSubmitted;
 
   const AuthPasswordField({
-    super.key,
-    required this.controller,
-    required this.obscureText,
-    required this.onToggleVisibility,
+    required this.controller, required this.obscureText, required this.onToggleVisibility, super.key,
     this.onSubmitted,
   });
 
@@ -76,10 +71,7 @@ class AuthLoadingButton extends StatelessWidget {
   final VoidCallback onPressed;
 
   const AuthLoadingButton({
-    super.key,
-    required this.isLoading,
-    required this.label,
-    required this.onPressed,
+    required this.isLoading, required this.label, required this.onPressed, super.key,
   });
 
   @override
@@ -104,10 +96,7 @@ class AuthRedirectRow extends StatelessWidget {
   final VoidCallback onTap;
 
   const AuthRedirectRow({
-    super.key,
-    required this.prompt,
-    required this.actionLabel,
-    required this.onTap,
+    required this.prompt, required this.actionLabel, required this.onTap, super.key,
   });
 
   @override

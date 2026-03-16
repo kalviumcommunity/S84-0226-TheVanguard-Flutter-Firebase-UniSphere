@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-import '../screens/splash_screen.dart';
-import '../screens/landing_screen.dart';
-import '../screens/login_screen.dart';
-import '../screens/signup_screen.dart';
-import '../screens/main_shell.dart';
-import '../screens/event_details_screen.dart';
-import '../screens/admin/create_event_screen.dart';
-import '../screens/admin/create_announcement_screen.dart';
+import 'package:unisphere/screens/splash_screen.dart';
+import 'package:unisphere/screens/landing_screen.dart';
+import 'package:unisphere/screens/login_screen.dart';
+import 'package:unisphere/screens/signup_screen.dart';
+import 'package:unisphere/screens/main_shell.dart';
+import 'package:unisphere/screens/event_details_screen.dart';
+import 'package:unisphere/screens/admin/create_event_screen.dart';
+import 'package:unisphere/screens/admin/create_announcement_screen.dart';
 
 /// Centralized route configuration for the entire app.
 ///

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../app/theme.dart';
-import '../widgets/theme_toggle_action.dart';
+import 'package:unisphere/app/theme.dart';
+import 'package:unisphere/widgets/theme_toggle_action.dart';
 
 /// Weekly class schedule screen with a beautiful timetable view.
 class ScheduleScreen extends StatefulWidget {
@@ -193,7 +193,7 @@ class _ScheduleScreenState extends State<ScheduleScreen>
                 color: UniSphereTheme.success.withAlpha(20),
                 shape: BoxShape.circle,
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.beach_access_rounded,
                 size: 40,
                 color: UniSphereTheme.success,

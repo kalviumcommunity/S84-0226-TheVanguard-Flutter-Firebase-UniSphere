@@ -1,4 +1,4 @@
-import '../models/event_model.dart';
+import 'package:unisphere/models/event_model.dart';
 
 /// Abstract contract for event data operations.
 ///

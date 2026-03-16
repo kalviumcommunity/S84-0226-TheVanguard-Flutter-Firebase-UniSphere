@@ -1,4 +1,4 @@
-import '../models/attendance_model.dart';
+import 'package:unisphere/models/attendance_model.dart';
 
 /// Abstract contract for attendance tracking operations.
 abstract class AttendanceRepository {

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../app/theme.dart';
-import '../../models/event_model.dart';
-import '../../providers/auth_provider.dart';
-import '../../providers/event_provider.dart';
+import 'package:unisphere/app/theme.dart';
+import 'package:unisphere/models/event_model.dart';
+import 'package:unisphere/providers/auth_provider.dart';
+import 'package:unisphere/providers/event_provider.dart';
 
 /// Admin screen for creating new events.
 ///

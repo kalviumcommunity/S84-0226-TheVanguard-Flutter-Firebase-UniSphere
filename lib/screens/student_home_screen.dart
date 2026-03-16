@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../app/theme.dart';
-import '../main.dart';
-import '../widgets/theme_toggle_action.dart';
+import 'package:unisphere/app/theme.dart';
+import 'package:unisphere/main.dart';
+import 'package:unisphere/widgets/theme_toggle_action.dart';
 
 /// Modern student home screen with personalized dashboard.
 /// Displays academic overview, quick actions, upcoming classes,
@@ -935,7 +935,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
                       color: UniSphereTheme.warning.withAlpha(20),
                       borderRadius: BorderRadius.circular(6),
                     ),
-                    child: Row(
+                    child: const Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
@@ -943,7 +943,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
                           size: 12,
                           color: UniSphereTheme.warning,
                         ),
-                        const SizedBox(width: 4),
+                        SizedBox(width: 4),
                         Text(
                           'Pinned',
                           style: TextStyle(

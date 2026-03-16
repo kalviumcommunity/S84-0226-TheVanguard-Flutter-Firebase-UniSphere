@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../models/user_model.dart';
-import '../providers/auth_provider.dart';
+import 'package:unisphere/models/user_model.dart';
+import 'package:unisphere/providers/auth_provider.dart';
 
 /// A widget that conditionally renders its [child] based on the
 /// current user's role.
@@ -21,9 +21,7 @@ class RoleBasedWidget extends StatelessWidget {
   final Widget? fallback;
 
   const RoleBasedWidget({
-    super.key,
-    required this.allowedRoles,
-    required this.child,
+    required this.allowedRoles, required this.child, super.key,
     this.fallback,
   });
 

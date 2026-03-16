@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../app/theme.dart';
-import '../../models/announcement_model.dart';
-import '../../providers/announcement_provider.dart';
-import '../../providers/auth_provider.dart';
+import 'package:unisphere/app/theme.dart';
+import 'package:unisphere/models/announcement_model.dart';
+import 'package:unisphere/providers/announcement_provider.dart';
+import 'package:unisphere/providers/auth_provider.dart';
 
 /// Admin screen for posting new announcements.
 ///
@@ -63,13 +63,13 @@ class _CreateAnnouncementScreenState extends State<CreateAnnouncementScreen> {
 
     if (created != null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Row(
             children: [
-              const Icon(Icons.check_circle_rounded,
+              Icon(Icons.check_circle_rounded,
                   color: Colors.white, size: 20),
-              const SizedBox(width: 10),
-              const Expanded(
+              SizedBox(width: 10),
+              Expanded(
                 child: Text('Announcement posted successfully!'),
               ),
             ],
