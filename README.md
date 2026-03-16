@@ -19,45 +19,6 @@ session-aware screen switching.
 3. Signup/Login automatically updates Firebase auth state.
 4. Logout ends session and instantly returns to `AuthScreen`.
 
-### Persistent Session Handling (Auto-Login)
-
-Firebase Authentication persists sessions on device automatically. On app restart,
-the app listens to `authStateChanges()` and restores navigation state without
-manual local storage.
-
-```dart
-home: StreamBuilder<User?>(
-  stream: FirebaseAuth.instance.authStateChanges(),
-  builder: (context, snapshot) {
-    if (snapshot.connectionState == ConnectionState.waiting) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
-    }
-
-    if (snapshot.hasData) {
-      return const HomeScreen();
-    }
-
-    return const AuthScreen();
-  },
-)
-```
-
-Auto-login behavior:
-
-1. User logs in once.
-2. App closes and reopens.
-3. Session is still valid, so app opens `HomeScreen` directly.
-4. After logout, auth state becomes null and app returns to `AuthScreen`.
-
-Screenshot sequence to include in submission:
-
-1. AuthScreen before login
-2. HomeScreen after login
-3. App reopen showing auto-login into HomeScreen
-4. Logout returning to AuthScreen
-
 ### Key Screens
 
 - `lib/screens/auth_screen.dart`: Toggle between Login and Sign Up with form validation and SnackBar error handling.
