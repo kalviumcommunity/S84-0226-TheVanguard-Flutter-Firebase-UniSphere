@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuth, User;
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +13,8 @@ import 'package:unisphere/providers/event_provider.dart';
 import 'package:unisphere/providers/registration_provider.dart';
 import 'package:unisphere/providers/announcement_provider.dart';
 import 'package:unisphere/repositories/firebase/firebase_repositories.dart';
+import 'package:unisphere/screens/auth_screen.dart';
+import 'package:unisphere/screens/home_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -83,10 +86,28 @@ class UniSphereAppState extends State<UniSphereApp> {
         themeMode: _themeMode,
         theme: UniSphereTheme.lightTheme,
         darkTheme: UniSphereTheme.darkTheme,
-        initialRoute: '/',
+        home: StreamBuilder<User?>(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Scaffold(
+                body: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            }
+
+            if (snapshot.hasData) {
+              return const HomeScreen();
+            }
+
+            return const AuthScreen();
+          },
+        ),
         onGenerateRoute: AppRouter.generateRoute,
       ),
     );
   }
 }
+
 

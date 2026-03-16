@@ -1,58 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-/// The landing screen of the multi-screen navigation demo.
-///
-/// Displays a welcome message and a button that navigates to
-/// [SecondScreen] via [Navigator.pushNamed], passing a String argument.
+/// Screen shown when a user is authenticated.
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Home Screen'),
-        centerTitle: true,
-        backgroundColor: Colors.deepPurple,
-        foregroundColor: Colors.white,
+        title: Text('Welcome, ${user?.email ?? 'User'}'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () => FirebaseAuth.instance.signOut(),
+          ),
+        ],
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'Welcome to UniSphere!',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(
-                  context,
-                  '/second',
-                  arguments: 'Hello from Home Screen!',
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepPurple,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 32,
-                  vertical: 14,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              child: const Text(
-                'Go to Second Screen',
-                style: TextStyle(fontSize: 16),
-              ),
-            ),
-          ],
+      body: const Center(
+        child: Text(
+          'You are logged in!',
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
         ),
       ),
     );

@@ -1,5 +1,45 @@
 # UniSphere – Flutter Widget Tree & Reactive UI Demo
 
+## Firebase Auth Flow (Signup, Login, Logout)
+
+This project now includes a complete Firebase Authentication flow with real-time
+session-aware screen switching.
+
+### What Was Implemented
+
+- Sign Up using `createUserWithEmailAndPassword()`
+- Login using `signInWithEmailAndPassword()`
+- Logout using `FirebaseAuth.instance.signOut()`
+- Real-time auth session routing using `authStateChanges()` in `main.dart`
+
+### Flow Summary
+
+1. If user is authenticated, app shows `HomeScreen`.
+2. If user is not authenticated, app shows `AuthScreen`.
+3. Signup/Login automatically updates Firebase auth state.
+4. Logout ends session and instantly returns to `AuthScreen`.
+
+### Key Screens
+
+- `lib/screens/auth_screen.dart`: Toggle between Login and Sign Up with form validation and SnackBar error handling.
+- `lib/screens/home_screen.dart`: Shows current logged-in user email and logout button.
+- `lib/main.dart`: Uses `StreamBuilder<User?>` with `FirebaseAuth.instance.authStateChanges()` to decide which screen to display.
+
+### Required Testing Checklist
+
+1. Sign up with a new email and password.
+2. Confirm user appears in Firebase Console -> Authentication -> Users.
+3. Confirm app navigates to HomeScreen after signup.
+4. Logout and verify app returns to AuthScreen.
+5. Login with same credentials and confirm HomeScreen is shown again.
+6. Try invalid login and verify SnackBar error messages are shown.
+
+### Reflection
+
+- Hardest part: Managing a clean session-driven navigation flow without manual route juggling after login/logout.
+- How `StreamBuilder` helps: It removes manual redirects and always reflects live auth state changes from Firebase.
+- Why logout matters: Logout clears session tokens on the device and prevents unauthorized access when another user opens the app.
+
 **Sprint 2 – Introduction to Flutter & Dart**
 
 A production-quality Flutter application demonstrating responsive UI design and Flutter's reactive UI model. The project includes a responsive layout that adapts between phone and tablet form factors, as well as a dedicated demo screen that illustrates the Widget Tree structure and state management with `setState()`.
