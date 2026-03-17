@@ -44,6 +44,12 @@ session-aware screen switching.
 
 A production-quality Flutter application demonstrating responsive UI design and Flutter's reactive UI model. The project includes a responsive layout that adapts between phone and tablet form factors, as well as a dedicated demo screen that illustrates the Widget Tree structure and state management with `setState()`.
 
+### Sprint 2 - Database Schema Design
+We have designed a scalable Firestore schema for UniSphere.
+- **[View the Complete Database Schema Design](DATABASE_SCHEMA.md)**
+- This design includes detailed collections for Users, Clubs, Events, and more.
+- It addresses scalability through subcollections and efficient querying patterns.
+
 ---
 
 ## Folder Structure
