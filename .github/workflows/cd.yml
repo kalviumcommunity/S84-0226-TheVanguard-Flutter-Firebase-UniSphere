@@ -16,25 +16,42 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '17'
+          cache: 'gradle'
           
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.0'
+          flutter-version: '3.41.2'
           channel: 'stable'
+          cache: true
           
       - name: Install Dependencies
         run: flutter pub get
+
+      - name: Extract Version Info
+        id: version
+        run: |
+          TAG_NAME=${GITHUB_REF#refs/tags/}
+          VERSION_NAME=${TAG_NAME#v}
+          echo "VERSION_NAME=$VERSION_NAME" >> $GITHUB_ENV
         
       # Note: To sign the app properly in production, set up your keystore via secrets
       # and run base64 decode before building. We build a generic release apk for now.
-      - name: Build Release APK
-        run: flutter build apk --release
+      - name: Build Release APK & AAB
+        run: |
+          flutter build apk --release --build-name=${{ env.VERSION_NAME }} --build-number=${{ github.run_number }}
+          flutter build appbundle --release --build-name=${{ env.VERSION_NAME }} --build-number=${{ github.run_number }}
         
-      - name: Upload Artifact
+      - name: Upload APK Artifact
         uses: actions/upload-artifact@v3
         with:
           name: release-apk
           path: build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Upload AAB Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-aab
+          path: build/app/outputs/bundle/release/app-release.aab
 
   build-and-release-ios:
     name: Build iOS Release
@@ -44,16 +61,24 @@ jobs:
       
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.0'
+          flutter-version: '3.41.2'
           channel: 'stable'
+          cache: true
           
       - name: Install Dependencies
         run: flutter pub get
+
+      - name: Extract Version Info
+        id: version
+        run: |
+          TAG_NAME=${GITHUB_REF#refs/tags/}
+          VERSION_NAME=${TAG_NAME#v}
+          echo "VERSION_NAME=$VERSION_NAME" >> $GITHUB_ENV
         
       # Note: For production iOS releases, you need provisioning profiles and certificates
       # configured securely. We build unsigned IPA/app for demonstration here.
       - name: Build Release iOS App
-        run: flutter build ios --release --no-codesign
+        run: flutter build ios --release --no-codesign --build-name=${{ env.VERSION_NAME }} --build-number=${{ github.run_number }}
         
       # To package into IPA without codesign is tricky natively, compression is an alternative
       - name: Compress iOS App
@@ -82,6 +107,7 @@ jobs:
         with:
           files: |
             artifacts/release-apk/app-release.apk
+            artifacts/release-aab/app-release.aab
             artifacts/release-ios/ios-release.zip
           generate_release_notes: true
         env:
