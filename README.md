@@ -753,3 +753,53 @@ Kalvium Community Project
 
 For questions or support, please open an issue in the repository.
 
+
+## Firestore Read Operations Demo
+
+### Project Overview
+This section demonstrates how UniSphere connects to Cloud Firestore to retrieve and display data in real-time. We are directly reading from the 	asks and config collections to display task data that updates instantly when changes occur.
+
+### Snippets
+
+**Collection Read (Real-time Stream):**
+`dart
+StreamBuilder<QuerySnapshot>(
+  stream: FirebaseFirestore.instance.collection('tasks').snapshots(),
+  builder: (context, snapshot) {
+    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+      return const Center(child: Text(""No tasks available.""));
+    }
+    final tasks = snapshot.data!.docs;
+    return ListView.builder(
+      itemCount: tasks.length,
+      itemBuilder: (context, index) {
+        final task = tasks[index];
+        return ListTile(
+          title: Text(task['title'] ?? ''),
+          subtitle: Text(task['description'] ?? ''),
+        );
+      },
+    );
+  },
+)
+`
+
+**Document Read (One-time Future):**
+`dart
+FutureBuilder<DocumentSnapshot>(
+  future: FirebaseFirestore.instance.collection('config').doc('app_info').get(),
+  builder: (context, snapshot) {
+    if (!snapshot.hasData || !snapshot.data!.exists) {
+      return const Text('App Info: Not found');
+    }
+    final data = snapshot.data!.data() as Map<String, dynamic>?;
+    return Text('Version: \');
+  },
+)
+`
+
+### Reflection
+**Which read method you used:** We used StreamBuilder for fetching a collection of tasks, and FutureBuilder for loading one-time static configuration.
+**Why real-time streams are useful:** StreamBuilder ensures that the UI updates automatically out of the box whenever documents are added, updated, or removed in Firestore without any manual refresh triggers.
+**Challenges faced:** Properly handling null and missing data safely in the builders to prevent UI crashes when collections were initially empty or fields didn't exist.
+
